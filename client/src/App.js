@@ -32,25 +32,25 @@ function App() {
       <BrowserRouter>
         <Header />
         <NavBarComp pageWrapID={"page-wrap"} outerContainerId={"outer-container"} />
-        <Routes>
-          <Route path="/" element={<HomePageComp />} />
-          <Route path="/search" element={<GeneralSearchComp />} />
-          <Route path="/items" element={<ShowItemsComp />} />
-          <Route path="/codigo-patrimonial" element={<CodePropertyComp />} />
-          <Route path="/trabajador" element={<WorkerSearchComp />} />
-          <Route path="/dependencia" element={<DependencySearchComp />} />
-          <Route path="/doble-busqueda" element={<DoubleSearchComp />} />
-          <Route path="/import-excel" element={<GridImportedComp />} />
-          {/* Ruta para páginas no encontradas */}
-          <Route path="*" element={<Error404Comp />} />
+        <main>
+          <Routes>
+            <Route path="/" element={<HomePageComp />} />
+            <Route path="/search" element={<GeneralSearchComp />} />
+            <Route path="/items" element={<ShowItemsComp />} />
+            <Route path="/codigo-patrimonial" element={<CodePropertyComp />} />
+            <Route path="/trabajador" element={<WorkerSearchComp />} />
+            <Route path="/dependencia" element={<DependencySearchComp />} />
+            <Route path="/doble-busqueda" element={<DoubleSearchComp />} />
+            <Route path="/import-excel" element={<GridImportedComp />} />
+            {/* Ruta para páginas no encontradas */}
+            <Route path="*" element={<Error404Comp />} />
 
-          {/* Handler Components */}
-          <Route path="/edit/:id" element={<EditItemComp />} />
-
-
-        </Routes>
+            {/* Handler Components */}
+            <Route path="/edit/:id" element={<EditItemComp />} />
+          </Routes>
+        </main>
       </BrowserRouter>
-      <FooterComp />
+      <FooterComp />  
     </div>
   );
 }

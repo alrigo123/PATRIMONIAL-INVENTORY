@@ -38,9 +38,12 @@ const CodeSearchMod2 = () => {
   };
 
   const handleEdit = (item) => {
-    console.log("Editando COD _PATRO ", item.CODIGO_PATRIMONIAL, "CON DATOS: ", item);
-    // Aquí puedes implementar la lógica de edición, como abrir un modal con el formulario de edición
-    // alert(`Editar item con código ${item.CODIGO_PATRIMONIAL}`);
+    if (!item.CODIGO_PATRIMONIAL) {
+      console.error('El CODIGO_PATRIMONIAL está indefinido:', item);
+      return; // Evita seguir si no hay un código válido
+    }
+    console.log("Editando CODIGO_PATRIMONIAL:", item.CODIGO_PATRIMONIAL, "CON DATOS:", item);
+    // Lógica de edición
   };
 
   const toggleDisposition = async (itemId, currentEstado) => {
@@ -149,57 +152,53 @@ const CodeSearchMod2 = () => {
                     ) : (
                       <span style={{ color: 'green', fontWeight: 'bold' }}>Funcional</span>
                     )}
-                  </td><td>
+                  </td>
+                  <td>
                     {item.SITUACION === 0 ? (
                       <span style={{ color: 'red', fontWeight: 'bold' }}>Faltante</span>
                     ) : (
                       <span style={{ color: 'green', fontWeight: 'bold' }}>Verificado</span>
                     )}
                   </td>
-                  {/* <td>
-                    <button itemId
-                      onClick={() => toggleDisposition(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
-                      className="btn btn-primary"
-                    >
-                      ⚙️ Cambiar Disposición
-                    </button>
-
-                    <button itemId
-                      onClick={() => toggleSituation(item.CODIGO_PATRIMONIAL, item.SITUACION)}
-                      className="btn btn-primary"
-                    >
-                      📝 Cambiar Situacion
-                    </button>
-
-                    <Link to="/edit"
-                      onClick={() => handleEdit(item)}
-                      className="btn btn-primary mt-2 mb-2 fw-bolder">
-                      ✏️ Editar
-                    </Link>
-                  </td> */}
-
                   <td>
-                    <div className="btn-group d-flex flex-column gap-2" role="group">
-                      <button
-                        onClick={() => toggleDisposition(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
-                        className="btn btn-primary d-flex align-items-center gap-2"
-                      >
-                        ⚙️ Cambiar Disposición
-                      </button>
-                      <button
-                        onClick={() => toggleSituation(item.CODIGO_PATRIMONIAL, item.SITUACION)}
-                        className="btn btn-primary d-flex align-items-center gap-2"
-                      >
-                        📝 Cambiar Situación
-                      </button>
-                      <Link
-                        to={`/edit/${item.CODIGO_PATRIMONIAL}`} 
-                        onClick={() => handleEdit(item)}
-                        className="btn btn-primary d-flex align-items-center gap-2"
-                      >
-                        ✏️ Editar
-                      </Link>
-                    </div>
+                    {item.SITUACION === 0 ? (
+                      <div className="btn-group d-flex flex-column gap-2" role="group">
+                        <button
+                          onClick={() => toggleDisposition(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
+                          className="btn btn-primary d-flex align-items-center gap-2"
+                        >
+                          ⚙️ Cambiar Disposición
+                        </button>
+                        <button
+                          onClick={() => toggleSituation(item.CODIGO_PATRIMONIAL, item.SITUACION)}
+                          className="btn btn-primary d-flex align-items-center gap-2"
+                        >
+                          📝 Cambiar Situación
+                        </button>
+                        <Link
+                          to={`/edit/${item.CODIGO_PATRIMONIAL}`}
+                          onClick={() => handleEdit(item)}
+                          className="btn btn-primary d-flex align-items-center gap-2"
+                        >
+                          ✏️ Editar
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="btn-group d-flex flex-column gap-2" role="group">
+                        <button
+                          onClick={() => toggleDisposition(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
+                          className="btn btn-primary d-flex align-items-center gap-2"
+                        >
+                          ⚙️ Cambiar Disposición
+                        </button>
+                        <button
+                          onClick={() => toggleSituation(item.CODIGO_PATRIMONIAL, item.SITUACION)}
+                          className="btn btn-primary d-flex align-items-center gap-2"
+                        >
+                          📝 Cambiar Situación
+                        </button>
+                      </div>
+                    )}
                   </td>
 
 

@@ -9,7 +9,7 @@ const CodePropertyComp = () => {
 
     return (
         <div className="container my-4">
-            <h2 className="text-center mb-4">Buscar bien por código patrimonial</h2>
+            <h2 className="text-center mb-4 fw-bold">Buscar bien por código patrimonial</h2>
 
             <Link to="/create" className="btn btn-primary mt-2 mb-2 fw-bolder">📦 AÑADIR BIEN</Link>
 

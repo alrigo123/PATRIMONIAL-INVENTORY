@@ -8,6 +8,7 @@ import { searchItems, searchItemsByWorkerAndDescription } from '../controllers/s
 
 import {
     updateDisposition, updateSituation, insertExcelData, getItemByCodePatAndUpdate,
+    updateItem
 } from '../controllers/handlerItems.controller.js';
 
 const router = Router();
@@ -24,6 +25,7 @@ router.get('/filter', searchItemsByWorkerAndDescription) // GET ITEMS BY WORKER 
 //GET ITEM BY CODE PATRIMONIAL
 router.put('/disposition/:id', updateDisposition);
 router.put('/situation/:id', updateSituation);
+router.put('/edit/:id', updateItem);  
 
 
 router.get('/:id', getItemByCodePatAndUpdate)
@@ -36,5 +38,5 @@ router.get('/dependency/qty', getItemsQtyByDependece)
 
 //POST AN IMPORTED DATA FROM EXCEL
 router.post('/imported', insertExcelData);
-
-export default router 
+                                                                                                      
+export default router;

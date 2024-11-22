@@ -36,8 +36,8 @@ const ModalComp = () => {
         shouldCloseOnOverlayClick={false} // Solo cierra con el botón
         style={{
           content: {
-            width: '80.5rem',
-            height: '24.5rem',
+            width: '100vh',
+            height: '100vh',
             margin: 'auto',
             textAlign: 'center',
             borderRadius: '10px',

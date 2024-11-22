@@ -2,14 +2,12 @@ import pool from '../db.js';
 
 export const searchItems = async (req, res, next) => {
     try {
-        const searchTerm = `%${req.query.q}%`; // Parche para que la búsqueda sea parcial con el operador LIKE
+        const searchTerm = req.query.q; // El término de búsqueda que el usuario ingresa
 
         const [rows] = await pool.query(
             `SELECT * FROM item 
-             WHERE DESCRIPCION LIKE ? 
-                OR TRABAJADOR LIKE ? 
-                OR DEPENDENCIA LIKE ?`,
-            [searchTerm, searchTerm, searchTerm]
+             WHERE MATCH(DESCRIPCION, TRABAJADOR, DEPENDENCIA) AGAINST (? IN NATURAL LANGUAGE MODE)`,
+            [searchTerm]
         );
 
         if (!rows.length) return res.status(404).json({ message: 'No se encontraron resultados' });

@@ -102,7 +102,7 @@ const CodeSearchMod1 = () => {
           </div>
         </div>
       ) : (
-        barcode && <p className="text-center text-danger">No se encontró ningún bien con el CODIGO PATRIMONIAL ingresado.</p>
+        barcode &&  <p className="text-center text-danger">No se encontró ningún bien con el CODIGO PATRIMONIAL ingresado.</p>
       )}
 
     </div>

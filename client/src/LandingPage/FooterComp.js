@@ -3,7 +3,7 @@ import '../styles/Footer.css'
 
 const FooterComp = () => {
     return (
-        <div>
+        <div className='mb-0'>
             <footer className="footer">
                 <p>Desarrollado por la Oficina de Informática</p>
                 <p className='fw-bold'>&copy; {new Date().getFullYear()} GERAGRI CUSCO</p>

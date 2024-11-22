@@ -8,7 +8,7 @@ export const updateDisposition = async (req, res) => {
             'UPDATE item SET DISPOSICION = ? WHERE CODIGO_PATRIMONIAL = ?',
             [DISPOSICION, id]
         );
- 
+
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Item not found' });
         }
@@ -37,7 +37,6 @@ export const updateSituation = async (req, res) => {
         res.status(500).json(error);
     }
 };
-
 
 export const getItemByCodePatAndUpdate = async (req, res, next) => {
     try {
@@ -93,6 +92,47 @@ export const getItemByCodePatAndUpdate = async (req, res, next) => {
         return res.status(500).json(error);
     }
 };
+
+export const updateItem = async (req, res) => {
+    const { id } = req.params;
+    const { TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION,
+        SITUACION } = req.body;
+
+    try {
+        // Consulta SQL para actualizar el item
+        const [result] = await pool.query(
+            `
+            UPDATE item 
+            SET 
+                TRABAJADOR = ?, 
+                DEPENDENCIA = ?, 
+                UBICACION = ?, 
+                FECHA_ALTA = ?, 
+                FECHA_COMPRA = ?, 
+                DISPOSICION = ?, 
+                SITUACION = ?
+            WHERE 
+                CODIGO_PATRIMONIAL = ?
+            `,
+            [
+                TRABAJADOR, DEPENDENCIA, UBICACION,
+                FECHA_ALTA || null, FECHA_COMPRA || null,
+                DISPOSICION, SITUACION,
+                id
+            ]
+        );
+
+        // Verificar si el ítem fue encontrado
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+
+        res.json({ message: 'Item updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating item', error });
+    }
+};
+
 
 export const insertExcelData = async (req, res) => {
     const { data } = req.body; // The data array from the React frontend
