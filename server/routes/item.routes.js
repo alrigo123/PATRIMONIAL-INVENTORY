@@ -4,7 +4,9 @@ import { getAllItems, getItemByCodePat, getItemsByDependece,
 
 import { searchItems, searchItemsByWorkerAndDescription } from '../controllers/searchItems.controller.js';
 
-import { updateDisposition, insertExcelData, getItemByCodePatAndUpdate } from '../controllers/handlerItems.controller.js';
+import { updateDisposition, insertExcelData, getItemByCodePatAndUpdate,
+    getItemByCodePatAndUpdate2
+ } from '../controllers/handlerItems.controller.js';
 
 const router = Router();
 
@@ -19,7 +21,7 @@ router.get('/filter', searchItemsByWorkerAndDescription) // GET ITEMS BY WORKER 
 
 //GET ITEM BY CODE PATRIMONIAL
 router.put('/:id', updateDisposition);
-router.get('/:id', getItemByCodePatAndUpdate)
+router.get('/:id', getItemByCodePatAndUpdate2)
 router.get('/status/:id', getItemByCodePat) // GET ITEMS BY PATRIMONIAL CODE 
 // router.get('/:id',getItemByCodePat)
 

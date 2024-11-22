@@ -138,7 +138,7 @@ const DependencySearchComp = () => {
                     </table>
                 </div>
             ) : (
-                searchTerm1 && <p className="text-center text-danger ">No se encontraron items con los datos de la dependencia.</p>
+                searchTerm1 && <p className="text-center text-danger">No se encontraron items con los datos de la dependencia.</p>
             )}
 
             <p className='text-lg-start fw-bold'>CANTIDAD ITEMS DE LA DEPENDENCIA</p>

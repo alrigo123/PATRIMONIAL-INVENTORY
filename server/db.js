@@ -11,7 +11,7 @@ const pool = new createPool({
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
-})
+}) 
 
 // // Clever cloud 
 // const pool = new createPool({
