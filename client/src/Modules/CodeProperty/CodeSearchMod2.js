@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
+const URL = 'http://localhost:3030/items'
 
 const CodeSearchMod2 = () => {
   const [stateCode, setStateCode] = useState('');
@@ -21,7 +23,7 @@ const CodeSearchMod2 = () => {
 
   const fetchState = async (code) => {
     try {
-      const response = await axios.get(`http://localhost:3030/items/status/${code}`);
+      const response = await axios.get(`${URL}/status/${code}`);
       setStateData([response.data] || []);
     } catch (error) {
       console.log('Error al obtener el estado:', error);
@@ -36,15 +38,15 @@ const CodeSearchMod2 = () => {
   };
 
   const handleEdit = (item) => {
-    console.log('Editando item:', item);
+    console.log("Editando COD _PATRO ", item.CODIGO_PATRIMONIAL, "CON DATOS: ", item);
     // Aquí puedes implementar la lógica de edición, como abrir un modal con el formulario de edición
-    alert(`Editar item con código ${item.CODIGO_PATRIMONIAL}`);
+    // alert(`Editar item con código ${item.CODIGO_PATRIMONIAL}`);
   };
 
-  const toggleEstado = async (itemId, currentEstado) => {
+  const toggleDisposition = async (itemId, currentEstado) => {
     try {
       // Cambia el estado en el backend
-      await axios.put(`http://localhost:3030/items/${itemId}`, {
+      await axios.put(`${URL}/disposition/${itemId}`, {
         DISPOSICION: currentEstado === 1 ? 0 : 1,
       });
 
@@ -61,8 +63,25 @@ const CodeSearchMod2 = () => {
     }
   };
 
+  const toggleSituation = async (itemId, currentEstado) => {
+    try {
+      // Cambia el estado en el backend
+      await axios.put(`${URL}/situation/${itemId}`, {
+        SITUACION: currentEstado === 1 ? 0 : 1,
+      });
 
-
+      // Actualiza el estado local sin hacer una nueva búsqueda
+      setStateData((prevResults) =>
+        prevResults.map((item) =>
+          item.CODIGO_PATRIMONIAL === itemId
+            ? { ...item, SITUACION: currentEstado === 1 ? 0 : 1 }
+            : item
+        )
+      );
+    } catch (error) {
+      console.error('Error al cambiar el estado:', error);
+    }
+  };
 
   return (
     <div>
@@ -137,26 +156,53 @@ const CodeSearchMod2 = () => {
                       <span style={{ color: 'green', fontWeight: 'bold' }}>Verificado</span>
                     )}
                   </td>
-                  <td>
+                  {/* <td>
                     <button itemId
-                      onClick={() => toggleEstado(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
+                      onClick={() => toggleDisposition(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
                       className="btn btn-primary"
                     >
-                      Cambiar Disposición
+                      ⚙️ Cambiar Disposición
                     </button>
+
                     <button itemId
-                      onClick={() => toggleEstado(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
+                      onClick={() => toggleSituation(item.CODIGO_PATRIMONIAL, item.SITUACION)}
                       className="btn btn-primary"
                     >
-                      Cambiar Situacion
+                      📝 Cambiar Situacion
                     </button>
-                    <button
+
+                    <Link to="/edit"
                       onClick={() => handleEdit(item)}
-                      className="btn btn-primary btn-sm"
-                    >
+                      className="btn btn-primary mt-2 mb-2 fw-bolder">
                       ✏️ Editar
-                    </button>
+                    </Link>
+                  </td> */}
+
+                  <td>
+                    <div className="btn-group d-flex flex-column gap-2" role="group">
+                      <button
+                        onClick={() => toggleDisposition(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
+                        className="btn btn-primary d-flex align-items-center gap-2"
+                      >
+                        ⚙️ Cambiar Disposición
+                      </button>
+                      <button
+                        onClick={() => toggleSituation(item.CODIGO_PATRIMONIAL, item.SITUACION)}
+                        className="btn btn-primary d-flex align-items-center gap-2"
+                      >
+                        📝 Cambiar Situación
+                      </button>
+                      <Link
+                        to={`/edit/${item.CODIGO_PATRIMONIAL}`} 
+                        onClick={() => handleEdit(item)}
+                        className="btn btn-primary d-flex align-items-center gap-2"
+                      >
+                        ✏️ Editar
+                      </Link>
+                    </div>
                   </td>
+
+
                 </tr>
               ))}
             </tbody>

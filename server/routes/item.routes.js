@@ -1,12 +1,14 @@
 import { Router } from 'express'
-import { getAllItems, getItemByCodePat, getItemsByDependece,
-    getItemsByWorker, getItemsQtyByDependece, getItemsQtyByWorker } from '../controllers/getItems.controller.js';
+import {
+    getAllItems, getItemByCodePat, getItemsByDependece,
+    getItemsByWorker, getItemsQtyByDependece, getItemsQtyByWorker
+} from '../controllers/getItems.controller.js';
 
 import { searchItems, searchItemsByWorkerAndDescription } from '../controllers/searchItems.controller.js';
 
-import { updateDisposition, insertExcelData, getItemByCodePatAndUpdate,
-    getItemByCodePatAndUpdate2
- } from '../controllers/handlerItems.controller.js';
+import {
+    updateDisposition, updateSituation, insertExcelData, getItemByCodePatAndUpdate,
+} from '../controllers/handlerItems.controller.js';
 
 const router = Router();
 
@@ -20,8 +22,11 @@ router.get('/dependency', getItemsByDependece) //GET ITEMS BY DEPENDENCY
 router.get('/filter', searchItemsByWorkerAndDescription) // GET ITEMS BY WORKER AND DESCRIPTION
 
 //GET ITEM BY CODE PATRIMONIAL
-router.put('/:id', updateDisposition);
-router.get('/:id', getItemByCodePatAndUpdate2)
+router.put('/disposition/:id', updateDisposition);
+router.put('/situation/:id', updateSituation);
+
+
+router.get('/:id', getItemByCodePatAndUpdate)
 router.get('/status/:id', getItemByCodePat) // GET ITEMS BY PATRIMONIAL CODE 
 // router.get('/:id',getItemByCodePat)
 

@@ -1,5 +1,8 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+
+const URL = 'http://localhost:3030/items'
+
 const CodeSearchMod1 = () => {
   const [barcode, setBarcode] = useState('');
   const [itemData, setItemData] = useState(null);
@@ -19,7 +22,7 @@ const CodeSearchMod1 = () => {
 
   const fetchItem = async (code) => {
     try {
-      const response = await axios.get(`http://localhost:3030/items/${code}`);
+      const response = await axios.get(`${URL}/${code}`);
       setItemData(response.data || null);
     } catch (error) {
       console.log('Error al obtener el item:', error);
@@ -32,9 +35,6 @@ const CodeSearchMod1 = () => {
     setItemData(null);
     inputRef.current.focus();
   };
-
-
-
 
   return (
     <div>

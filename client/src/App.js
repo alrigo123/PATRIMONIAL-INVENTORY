@@ -9,7 +9,6 @@ import FooterComp from './LandingPage/FooterComp.js';
 import GeneralSearchComp from './ItemComponents/GeneralSearchComp.js'; // Ajusta la ruta según tu estructura
 import ShowItemsComp from './ItemComponents/ShowItemsComp.js';
 import CodePropertyComp from './ItemComponents/CodePropertyComp.js';
-import V1CodePropertyComp from './test/V1CodePropertyComp.js';
 import WorkerSearchComp from './ItemComponents/WorkerSearchComp.js';
 import DependencySearchComp from './ItemComponents/DependencySearchComp.js';
 import DoubleSearchComp from './ItemComponents/DoubleSearchComp.js';
@@ -21,6 +20,9 @@ import GridImportedComp from './GridComponents/GridImportedComp.js';
 import Header from './NavigationComponents/Header.js';
 import NavBarComp from './NavigationComponents/NavBarComp.js';
 import Error404Comp from './NavigationComponents/Error404Comp.js';
+
+//Handler Components
+import EditItemComp from './HandlerComponets/EditItemComp.js';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -35,13 +37,17 @@ function App() {
           <Route path="/search" element={<GeneralSearchComp />} />
           <Route path="/items" element={<ShowItemsComp />} />
           <Route path="/codigo-patrimonial" element={<CodePropertyComp />} />
-          {/* <Route path="/codigo-patrimonial" element={<V1CodePropertyComp />} /> */}
           <Route path="/trabajador" element={<WorkerSearchComp />} />
           <Route path="/dependencia" element={<DependencySearchComp />} />
           <Route path="/doble-busqueda" element={<DoubleSearchComp />} />
           <Route path="/import-excel" element={<GridImportedComp />} />
           {/* Ruta para páginas no encontradas */}
           <Route path="*" element={<Error404Comp />} />
+
+          {/* Handler Components */}
+          <Route path="/edit/:id" element={<EditItemComp />} />
+
+
         </Routes>
       </BrowserRouter>
       <FooterComp />

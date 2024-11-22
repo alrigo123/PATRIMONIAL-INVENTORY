@@ -36,8 +36,8 @@ const ExportReportsDispoMod = () => {
 
   // Función para mapear estado
   const mapEstado = (estado) => {
-    if (estado === 1) return "Si";
-    if (estado === 0) return "No";
+    if (estado === 1) return "Funcional";
+    if (estado === 0) return "No Funcional";
     return "Desconocido";
   };
 

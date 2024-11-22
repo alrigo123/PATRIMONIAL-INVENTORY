@@ -1,17 +1,17 @@
 import { createPool } from 'mysql2/promise'; //pool to use 
 
 // Local Host
-const pool = new createPool({
-    host: 'localhost',
-    // port : 3333,
-    user: 'root',
-    password: '',
-    // database : 'geragri-inventario'
-    database: 'bienes-geragri',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-}) 
+// const pool = new createPool({
+//     host: 'localhost',
+//     // port : 3333,
+//     user: 'root',
+//     password: '',
+//     // database : 'geragri-inventario'
+//     database: 'bienes-geragri',
+//     waitForConnections: true,
+//     connectionLimit: 10,
+//     queueLimit: 0
+// }) 
 
 // // Clever cloud 
 // const pool = new createPool({
@@ -28,7 +28,7 @@ const pool = new createPool({
 // const pool = new createPool({
 //     host: '192.168.0.55',
 //     user: 'root',
-//     password: 'cjmxc100',
+//     password: 'cjmxc100',    
 //     database: 'bienes_geragri',
 // waitForConnections: true,
 // connectionLimit: 10,
@@ -36,15 +36,15 @@ const pool = new createPool({
 // }) 
 
 // Docker VM server GERAGRI
-// const pool = new createPool({
-//     host: '192.168.5.199',
-//     user: 'root',
-//     password: 'cjmxc100',
-//     database: 'bienes_geragri',
-// waitForConnections: true,
-// connectionLimit: 10,
-// queueLimit: 0
-// })
+const pool = new createPool({
+    host: '192.168.5.199',
+    user: 'root',
+    password: 'cjmxc100',
+    database: 'geragri-inventario',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+})
 
 // Check database connection
 async function checkConnection() {

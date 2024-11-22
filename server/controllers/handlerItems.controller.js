@@ -8,7 +8,7 @@ export const updateDisposition = async (req, res) => {
             'UPDATE item SET DISPOSICION = ? WHERE CODIGO_PATRIMONIAL = ?',
             [DISPOSICION, id]
         );
-
+ 
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: 'Item not found' });
         }
@@ -19,72 +19,34 @@ export const updateDisposition = async (req, res) => {
     }
 };
 
+export const updateSituation = async (req, res) => {
+    const { id } = req.params;
+    const { SITUACION } = req.body;
+    try {
+        const [result] = await pool.query(
+            'UPDATE item SET SITUACION = ? WHERE CODIGO_PATRIMONIAL = ?',
+            [SITUACION, id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+
+        res.json({ message: 'Situation updated successfully' });
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
 
 export const getItemByCodePatAndUpdate = async (req, res, next) => {
     try {
         const id = req.params.id;
 
-/* hacer una condicional de que si el id no es igual a 12 caracteres entonces ni busque nada */
+        /* hacer una condicional de que si el id no es igual a 12 caracteres entonces ni busque nada */
 
 
-// porque despues de 8 ya no quiere buscar
-
-        // // Log para verificar el parámetro recibido
-        console.log('ID recibido:', id);
-
-        // Intento de búsqueda del item
-        const [rows] = await pool.query("SELECT * FROM item WHERE CODIGO_PATRIMONIAL = ?", [id]);
-
-        // // Log para verificar si el item fue encontrado
-        console.log('Resultado de búsqueda:', rows);
-
-        if (!rows.length) {
-            console.log('Item no encontrado.');
-            return res.status(404).json({ message: 'Item not found' });
-        }
-
-        // Aquí se obtiene el item
-        const item = rows[0];
-        const fechaRegistro = new Date(); // Fecha actual
-
-        // // Log para verificar valores antes de actualizar
-        console.log('Preparando para actualizar item con ID:', id);
-        console.log('Fecha Registro:', fechaRegistro);
-
-        // Intento de actualizar estado y fecha
-        const [updateResult] = await pool.query(
-            "UPDATE item SET ESTADO = 1, FECHA_REGISTRO = ? WHERE CODIGO_PATRIMONIAL = ?",
-            [fechaRegistro, id]
-        );
-
-        // Log para verificar si la actualización fue exitosa
-        console.log('Resultado de la actualización:', updateResult);
-
-        // // Verifica si la actualización afectó alguna fila
-        if (updateResult.affectedRows === 0) {
-            console.log('No se actualizó ningún registro.');
-        } else {
-            console.log('Registro actualizado correctamente.');
-        }
-
-        // Retornar el item con sus datos actualizados
-        res.json({ ...item, ESTADO: 1, FECHA_REGISTRO: fechaRegistro });
-    } catch (error) {
-        console.error('Error en la actualización:', error);
-        return res.status(500).json(error);
-    }
-};
-
-
-
-export const getItemByCodePatAndUpdate2 = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-
-/* hacer una condicional de que si el id no es igual a 12 caracteres entonces ni busque nada */
-
-
-// porque despues de 8 ya no quiere buscar
+        // porque despues de 8 ya no quiere buscar
 
         // // Log para verificar el parámetro recibido
         console.log('ID recibido:', id);
@@ -125,7 +87,7 @@ export const getItemByCodePatAndUpdate2 = async (req, res, next) => {
         }
 
         // Retornar el item con sus datos actualizados
-        res.json({ ...item, ESTADO: 1, SITUACION:1, FECHA_REGISTRO: fechaRegistro });
+        res.json({ ...item, ESTADO: 1, SITUACION: 1, FECHA_REGISTRO: fechaRegistro });
     } catch (error) {
         console.error('Error en la actualización:', error);
         return res.status(500).json(error);
