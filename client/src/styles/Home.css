@@ -10,13 +10,15 @@
     text-align: center;
     background-color: #f1f1f1;
     min-height: 100vh;
+
   }
   
   .App-header {
     background-color: #4CAF50;
     color: white;
-    padding: 50px 20px;
+    padding: 10px 10px;
     text-align: center;
+    margin: 0;
   }
   
   .title {

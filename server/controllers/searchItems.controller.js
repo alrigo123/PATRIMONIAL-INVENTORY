@@ -1,12 +1,21 @@
 import pool from '../db.js';
 
-export const searchItems = async (req, res, next) => {
+export const searchGeneral = async (req, res, next) => {
     try {
         const searchTerm = req.query.q; // El término de búsqueda que el usuario ingresa
 
+        /* 
+        ##FULL TEXT PARA OPTIMIZAR LA BUSQUEDA SIN ORDEN 
+        ##CREAR UN INDEX EN LA BD Y LUEGO LA CONSULTA LO MATCHEA
+       
+       "SHOW INDEX FROM item;" ## PARA VER LOS FULLTEXT
+        "CREATE FULLTEXT INDEX idx_trabajador_desc ON item(TRABAJADOR, DESCRIPCION, DEPENDENCIA);"
+        */
+
         const [rows] = await pool.query(
             `SELECT * FROM item 
-             WHERE MATCH(DESCRIPCION, TRABAJADOR, DEPENDENCIA) AGAINST (? IN NATURAL LANGUAGE MODE)`,
+             WHERE MATCH(DESCRIPCION, TRABAJADOR, DEPENDENCIA) 
+             AGAINST (? IN NATURAL LANGUAGE MODE)`,
             [searchTerm]
         );
 
@@ -18,7 +27,39 @@ export const searchItems = async (req, res, next) => {
     }
 };
 
+export const searchItemsByWorker = async (req, res, next) => {
+    try {
+        const trabajador = req.query.q;
+        const [rows] = await pool.query(
+            `SELECT * FROM item 
+            WHERE MATCH(TRABAJADOR) AGAINST 
+            (? IN NATURAL LANGUAGE MODE)`,
+            [trabajador]
+        );
 
+        if (!rows.length) return res.status(404).json({ message: 'No se encontraron ítems para el trabajador especificado' });
+        res.json(rows);
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+};
+
+export const searchItemsByDependece = async (req, res, next) => {
+    try {
+        const dependece = req.query.q;
+        const [rows] = await pool.query(
+            `SELECT * FROM item 
+             WHERE MATCH(DEPENDENCIA) AGAINST 
+             (? IN NATURAL LANGUAGE MODE)`,
+            [dependece]
+        );
+
+        if (!rows.length) return res.status(404).json({ message: 'No se encontraron ítems para la dependencia especificada' });
+        res.json(rows);
+    } catch (error) {
+        return res.status(500).json(error);
+    }
+};
 
 export const searchItemsByWorkerAndDescription = async (req, res, next) => {
     try {
@@ -28,7 +69,8 @@ export const searchItemsByWorkerAndDescription = async (req, res, next) => {
 
         // Realizamos la consulta SQL con los parámetros
         const [rows] = await pool.query(`
-            SELECT * FROM item WHERE TRABAJADOR LIKE ? AND DESCRIPCION LIKE ? ORDER BY DESCRIPCION
+            SELECT * FROM item WHERE TRABAJADOR LIKE ? 
+            AND DESCRIPCION LIKE ? ORDER BY DESCRIPCION
         `, [trabajador, descripcion]);
 
         // Validamos si hay resultados

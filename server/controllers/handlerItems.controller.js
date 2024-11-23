@@ -48,13 +48,13 @@ export const getItemByCodePatAndUpdate = async (req, res, next) => {
         // porque despues de 8 ya no quiere buscar
 
         // // Log para verificar el parámetro recibido
-        console.log('ID recibido:', id);
+        // console.log('ID recibido:', id);
 
         // Intento de búsqueda del item
         const [rows] = await pool.query("SELECT * FROM item WHERE CODIGO_PATRIMONIAL = ?", [id]);
 
         // // Log para verificar si el item fue encontrado
-        console.log('Resultado de búsqueda:', rows);
+        // console.log('Resultado de búsqueda:', rows);
 
         if (!rows.length) {
             console.log('Item no encontrado.');
@@ -66,8 +66,8 @@ export const getItemByCodePatAndUpdate = async (req, res, next) => {
         const fechaRegistro = new Date(); // Fecha actual
 
         // // Log para verificar valores antes de actualizar
-        console.log('Preparando para actualizar item con ID:', id);
-        console.log('Fecha Registro:', fechaRegistro);
+        // console.log('Preparando para actualizar item con ID:', id);
+        // console.log('Fecha Registro:', fechaRegistro);
 
         // Intento de actualizar estado y fecha
         const [updateResult] = await pool.query(
@@ -76,7 +76,7 @@ export const getItemByCodePatAndUpdate = async (req, res, next) => {
         );
 
         // Log para verificar si la actualización fue exitosa
-        console.log('Resultado de la actualización:', updateResult);
+        // console.log('Resultado de la actualización:', updateResult);
 
         // // Verifica si la actualización afectó alguna fila
         if (updateResult.affectedRows === 0) {
