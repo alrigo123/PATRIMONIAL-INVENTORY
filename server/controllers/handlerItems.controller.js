@@ -121,14 +121,15 @@ export const updateItem = async (req, res) => {
                 DISPOSICION, SITUACION,
                 id
             ]
-        );
+        ); 
 
         // Verificar si el ítem fue encontrado
         if (result.affectedRows === 0) {
             console.log("NO SE ENCONTRO EL ITEM")
             return res.status(404).json({ message: 'Item not found' });
         }
- 
+
+
         res.json({ message: 'Item updated successfully' });
     } catch (error) {
         console.log("ERROR EN HANDLER: ", error)

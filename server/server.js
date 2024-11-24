@@ -21,6 +21,15 @@ app.use(express.json()) //process data to send to the backend
 app.use(helmet());
 app.use(limiter);
 
+// Middleware para deshabilitar el caché
+app.use((req, res, next) => {
+    res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.header('Pragma', 'no-cache');
+    res.header('Expires', '0');
+    res.header('Surrogate-Control', 'no-store');
+    next();
+});
+
 //Routes
 import routes from './routes/index.routes.js';
 import item_routes from './routes/item.routes.js';
@@ -28,8 +37,9 @@ import export_reports from './routes/export.routes.js'
 
 //app
 app.use(routes)
-app.use('/items',item_routes)
-app.use('/export',export_reports)
+app.use('/items', item_routes)
+app.use('/export', export_reports)
+
 
 app.listen(PORT, () => {
     console.log(`listening on http://localhost:${PORT}`);

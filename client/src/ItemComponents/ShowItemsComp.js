@@ -33,6 +33,7 @@ const ShowItemsComp = () => {
 
     useEffect(() => {
         getItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, limit]);
 
     // Calcular total de páginas

@@ -30,27 +30,6 @@ const WorkerSearchMod1 = () => {
         fetchItems1();
     }, [searchTerm1]);
 
-    // Función para alternar el estado del item
-    const toggleEstado = async (itemId, currentEstado) => {
-        try {
-            // Cambia el estado en el backend
-            await axios.put(`${URL}/${itemId}`, {
-                DISPOSICION: currentEstado === 1 ? 0 : 1,
-            });
-
-            // Actualiza el estado local sin hacer una nueva búsqueda
-            setResults1((prevResults) =>
-                prevResults.map((item) =>
-                    item.CODIGO_PATRIMONIAL === itemId
-                        ? { ...item, DISPOSICION: currentEstado === 1 ? 0 : 1 }
-                        : item
-                )
-            );
-        } catch (error) {
-            console.error('Error al cambiar el estado:', error);
-        }
-    };
-
     return (
         <div>
             {/* Primer buscador */}
