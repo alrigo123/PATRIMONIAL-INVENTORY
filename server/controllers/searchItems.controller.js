@@ -82,3 +82,30 @@ export const searchItemsByWorkerAndDescription = async (req, res, next) => {
         return res.status(500).json({ message: "Error en el servidor" });
     }
 };
+
+// export const searchItemsByWorkerAndDescription = async (req, res, next) => {
+// CREAR UN FULLTEXT ESPECIFICO PARA LOS DOS ??? , PRIMERO PROBAR SIN CREAR EL FULLTEXT Y LUEGO YA
+//     try {
+//         // Extraemos los valores de trabajador y descripción de la consulta
+//         const trabajador = req.query.trabajador || '';
+//         const descripcion = req.query.descripcion || '';
+
+//         // Realizamos la consulta SQL con MATCH ... AGAINST
+//         const [rows] = await pool.query(`
+//             SELECT * 
+//             FROM item 
+//             WHERE MATCH(TRABAJADOR) AGAINST(? IN BOOLEAN MODE)
+//               AND MATCH(DESCRIPCION) AGAINST(? IN BOOLEAN MODE)
+//             ORDER BY DESCRIPCION
+//         `, [trabajador, descripcion]);
+
+//         // Validamos si hay resultados
+//         if (!rows.length) 
+//             return res.status(404).json({ message: 'No se encontraron ítems con los criterios especificados' });
+
+//         res.json(rows); // Enviamos los resultados
+//     } catch (error) {
+//         console.error("Error en la consulta:", error);
+//         return res.status(500).json({ message: "Error en el servidor" });
+//     }
+// };

@@ -71,11 +71,13 @@ const WorkerSearchMod1 = () => {
                             <tr>
                                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>CODIGO PATRIMONIAL</th>
                                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DESCRIPCION</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DEPENDENCIA</th>
                                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>TRABAJADOR</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>ESTADO</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DISPOSICION</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>ACCION</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DEPENDENCIA</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Fecha de Compra</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Fecha de Alta</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Estado</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Disposición</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Situación</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,29 +85,30 @@ const WorkerSearchMod1 = () => {
                                 <tr key={index}>
                                     <td>{item.CODIGO_PATRIMONIAL}</td>
                                     <td>{item.DESCRIPCION}</td>
-                                    <td>{item.DEPENDENCIA}</td>
                                     <td>{item.TRABAJADOR}</td>
+                                    <td>{item.DEPENDENCIA}</td>
+                                    <td >{item.FECHA_COMPRA ? item.FECHA_COMPRA : 'No Registra'}</td>
+                                    <td>{item.FECHA_ALTA ? item.FECHA_ALTA : 'No Registra'}</td>
                                     <td>
                                         {item.ESTADO === 0 ? (
-                                            <span style={{ color: 'red', fontWeight: 'bold' }}>❌ No Registrado</span>
+                                            <span style={{ color: 'red', fontWeight: 'bold' }}> No Patrimonizado</span>
                                         ) : (
-                                            <span style={{ color: 'green', fontWeight: 'bold' }}>✅ Registrado</span>
+                                            <span style={{ color: 'green', fontWeight: 'bold' }}>Patrimonizado</span>
                                         )}
                                     </td>
                                     <td>
                                         {item.DISPOSICION === 0 ? (
-                                            <span style={{ color: 'red', fontWeight: 'bold' }}>No</span>
+                                            <span style={{ color: 'red', fontWeight: 'bold' }}>No Funcional</span>
                                         ) : (
-                                            <span style={{ color: 'green', fontWeight: 'bold' }}>Si</span>
+                                            <span style={{ color: 'green', fontWeight: 'bold' }}>Funcional</span>
                                         )}
                                     </td>
                                     <td>
-                                        <button itemId
-                                            onClick={() => toggleEstado(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
-                                            className="btn btn-primary"
-                                        >
-                                            Cambiar Disposición
-                                        </button>
+                                        {item.SITUACION === 0 ? (
+                                            <span style={{ color: 'red', fontWeight: 'bold' }}>Faltante</span>
+                                        ) : (
+                                            <span style={{ color: 'green', fontWeight: 'bold' }}>Verificado</span>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

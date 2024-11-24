@@ -17,7 +17,7 @@ const router = Router();
 
 /* ROUTES FOR ITEMS AND SEARCH */
 
-//GET ITEMS
+//GET REQUEST
 router.get('/', getAllItems)
 router.get('/search', searchGeneral); // Endpoint para la búsqueda en tiempo real
 router.get('/worker', searchItemsByWorker) //GET ITEMS BY WORKER
@@ -26,19 +26,18 @@ router.get('/filter', searchItemsByWorkerAndDescription) // GET ITEMS BY WORKER 
 
 router.get('/:id', getItemByCodePatAndUpdate)
 router.get('/status/:id', getItemByCodePat) // GET ITEMS BY PATRIMONIAL CODE 
-// router.get('/:id',getItemByCodePat)
 
-//GET QTY ITEMS
+//GET QTY ITEMS REQUEST
 router.get('/worker/qty', getItemsQtyByWorker)
 router.get('/dependency/qty', getItemsQtyByDependece)
 
-//GET ITEM BY CODE PATRIMONIAL
+//PUT REQUEST
 router.put('/disposition/:id', updateDisposition);
 router.put('/situation/:id', updateSituation);
 router.put('/edit/:id', updateItem);  
 
 
-//POST AN IMPORTED DATA FROM EXCEL
+//POST REQUEST
 router.post('/imported', insertExcelData);
 
 export default router;

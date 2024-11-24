@@ -21,7 +21,6 @@ app.use(express.json()) //process data to send to the backend
 app.use(helmet());
 app.use(limiter);
 
-
 //Routes
 import routes from './routes/index.routes.js';
 import item_routes from './routes/item.routes.js';

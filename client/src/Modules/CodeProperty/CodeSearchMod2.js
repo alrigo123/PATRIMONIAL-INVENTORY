@@ -89,7 +89,7 @@ const CodeSearchMod2 = () => {
   return (
     <div>
       {/* Sección de búsqueda para estados */}
-      <p className="text-lg-start fw-bold">CONSULTAR ESTADO DEL BIEN PATRIMONIAL</p>
+      <h5 className="text-lg-start fw-bold">CONSULTAR ESTADO DEL BIEN PATRIMONIAL</h5>
       <div className="row g-3">
         <div className="col-10">
           <input
@@ -98,15 +98,15 @@ const CodeSearchMod2 = () => {
             value={stateCode}
             onChange={handleStateInputChange}
             ref={stateInputRef}
-            className="form-control mb-3"
-            style={{ marginBottom: '20px', fontSize: '1rem', padding: '10px' }}
+            className="form-control mb-3 fw-bold"
+            style={{ marginBottom: '20px', fontSize: '1.2rem', padding: '10px' }}
           />
         </div>
         <div className="col-2">
           <button
             onClick={clearStateInput}
             className="btn btn-dark mb-3 fw-bold"
-            style={{ marginBottom: '20px', fontSize: '1rem', padding: '10px' }}
+            style={{ marginBottom: '20px', fontSize: '1.2rem', padding: '10px' }}
           >
             🧹 Limpiar
           </button>
@@ -118,15 +118,15 @@ const CodeSearchMod2 = () => {
           <table className="w-auto table table-striped table-bordered align-middle mb-5" style={{ width: '100%', tableLayout: 'fixed' }}>
             <thead className="thead-dark">
               <tr>
-                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>CODIGO PATRIMONIAL</th>
-                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DESCRIPCION</th>
-                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DEPENDENCIA</th>
-                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>TRABAJADOR</th>
+                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Codigo Patrimonial</th>
+                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Descripción</th>
+                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Trabajador</th>
+                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Dependencia</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Ultima Fecha de Registro</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Fecha de Alta</th>
-                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>ESTADO</th>
-                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DISPOSICION</th>
-                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>SITUACION</th>
+                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Estado</th>
+                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Disposición</th>
+                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Situación</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>ACCION</th>
               </tr>
             </thead>
@@ -135,15 +135,15 @@ const CodeSearchMod2 = () => {
                 <tr key={index}>
                   <td>{item.CODIGO_PATRIMONIAL}</td>
                   <td>{item.DESCRIPCION}</td>
-                  <td>{item.DEPENDENCIA}</td>
                   <td>{item.TRABAJADOR}</td>
+                  <td>{item.DEPENDENCIA}</td>
                   <td>{item.FECHA_REGISTRO ? new Date(item.FECHA_REGISTRO).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''}</td>
-                  <td>{item.FECHA_ALTA}</td>
+                  <td>{item.FECHA_ALTA ? item.FECHA_ALTA : 'No Registra'}</td>
                   <td>
                     {item.ESTADO === 0 ? (
-                      <span style={{ color: 'red', fontWeight: 'bold' }}>❌ No Patrimonizado</span>
+                      <span style={{ color: 'red', fontWeight: 'bold' }}>No Patrimonizado</span>
                     ) : (
-                      <span style={{ color: 'green', fontWeight: 'bold' }}>✅ Patrimonizado</span>
+                      <span style={{ color: 'green', fontWeight: 'bold' }}>Patrimonizado</span>
                     )}
                   </td>
                   <td>
@@ -165,20 +165,20 @@ const CodeSearchMod2 = () => {
                       <div className="btn-group d-flex flex-column gap-2" role="group">
                         <button
                           onClick={() => toggleDisposition(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
-                          className="btn btn-primary d-flex align-items-center gap-2"
+                          className="btn btn-primary btn-sm d-flex align-items-center gap-2"
                         >
                           ⚙️ Cambiar Disposición
                         </button>
                         <button
                           onClick={() => toggleSituation(item.CODIGO_PATRIMONIAL, item.SITUACION)}
-                          className="btn btn-primary d-flex align-items-center gap-2"
+                          className="btn btn-primary bt-sm d-flex align-items-center gap-2"
                         >
                           📝 Cambiar Situación
                         </button>
                         <Link
                           to={`/edit/${item.CODIGO_PATRIMONIAL}`}
                           onClick={() => handleEdit(item)}
-                          className="btn btn-primary d-flex align-items-center gap-2"
+                          className="btn btn-primary bt-sm d-flex align-items-center gap-2"
                         >
                           ✏️ Editar
                         </Link>
@@ -187,13 +187,13 @@ const CodeSearchMod2 = () => {
                       <div className="btn-group d-flex flex-column gap-2" role="group">
                         <button
                           onClick={() => toggleDisposition(item.CODIGO_PATRIMONIAL, item.DISPOSICION)}
-                          className="btn btn-primary d-flex align-items-center gap-2"
+                          className="btn btn-primary bt-sm d-flex align-items-center gap-2"
                         >
                           ⚙️ Cambiar Disposición
                         </button>
                         <button
                           onClick={() => toggleSituation(item.CODIGO_PATRIMONIAL, item.SITUACION)}
-                          className="btn btn-primary d-flex align-items-center gap-2"
+                          className="btn btn-primary bt-sm d-flex align-items-center gap-2"
                         >
                           📝 Cambiar Situación
                         </button>

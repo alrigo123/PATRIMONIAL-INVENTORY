@@ -82,7 +82,7 @@ export const getItemByCodePatAndUpdate = async (req, res, next) => {
         if (updateResult.affectedRows === 0) {
             console.log('No se actualizó ningún registro.');
         } else {
-            console.log('Registro actualizado correctamente.');
+            console.log('Registro, estado y situacion actualizado correctamente.');
         }
 
         // Retornar el item con sus datos actualizados
@@ -95,7 +95,7 @@ export const getItemByCodePatAndUpdate = async (req, res, next) => {
 
 export const updateItem = async (req, res) => {
     const { id } = req.params;
-    const { TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION,
+    const { DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION,
         SITUACION } = req.body;
 
     try {
@@ -104,6 +104,7 @@ export const updateItem = async (req, res) => {
             `
             UPDATE item 
             SET 
+                DESCRIPCION = ?,
                 TRABAJADOR = ?, 
                 DEPENDENCIA = ?, 
                 UBICACION = ?, 
@@ -115,7 +116,7 @@ export const updateItem = async (req, res) => {
                 CODIGO_PATRIMONIAL = ?
             `,
             [
-                TRABAJADOR, DEPENDENCIA, UBICACION,
+                DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION,
                 FECHA_ALTA || null, FECHA_COMPRA || null,
                 DISPOSICION, SITUACION,
                 id
@@ -124,15 +125,17 @@ export const updateItem = async (req, res) => {
 
         // Verificar si el ítem fue encontrado
         if (result.affectedRows === 0) {
+            console.log("NO SE ENCONTRO EL ITEM")
             return res.status(404).json({ message: 'Item not found' });
         }
-
+ 
         res.json({ message: 'Item updated successfully' });
     } catch (error) {
+        console.log("ERROR EN HANDLER: ", error)
         res.status(500).json({ message: 'Error updating item', error });
     }
 };
-
+ 
 
 export const insertExcelData = async (req, res) => {
     const { data } = req.body; // The data array from the React frontend
