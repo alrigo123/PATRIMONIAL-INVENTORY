@@ -1,13 +1,18 @@
 import { createPool } from 'mysql2/promise'; //pool to use 
 
+import { config } from 'dotenv';
+
+// Cargar las variables del archivo .env
+config();
+
+
 // Local Host
 // const pool = new createPool({
 //     host: 'localhost',
 //     // port : 3333,
-//     user: 'root',
+//     user: process.env.DB_USER_LOCAL,
 //     password: '',
-//     // database : 'geragri-inventario'
-//     database: 'bienes-geragri',
+//     database: process.env.DB_NAME_LOCAL',
 //     waitForConnections: true,
 //     connectionLimit: 10,
 //     queueLimit: 0
@@ -15,21 +20,21 @@ import { createPool } from 'mysql2/promise'; //pool to use
 
 // Clever cloud 
 // const pool = new createPool({
-//     host: 'baobfvsm079fl2l3b4wv-mysql.services.clever-cloud.com',
-//     user: 'umtuhz11zooiir2b',
-//     password: 'JlKeGtt6n2csVeFYVFb4',
-//     database: 'baobfvsm079fl2l3b4wv',
+//     host: process.env.DB_HOST_CLOUD,
+//     user: process.env.DB_USER_CLOUD,
+//     password: process.env.DB_PASSWORD_CLOUD,
+//     database: process.env.DB_NAME_CLOUD,
 //     waitForConnections: true,
 //     connectionLimit: 10,
 //     queueLimit: 0
 // })
- 
+
 // Docker VM server
 const pool = new createPool({
-    host: '192.168.0.55',
-    user: 'root',
-    password: 'cjmxc100',
-    database: 'geragri-inventario',
+    host: process.env.DB_HOST_DOCKER,
+    user: process.env.DB_USER_DOCKER,
+    password: process.env.DB_PASSWORD_DOCKER,
+    database: process.env.DB_NAME_DOCKER,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -37,10 +42,10 @@ const pool = new createPool({
 
 // Docker VM server GERAGRI
 // const pool = new createPool({
-//     host: '192.168.5.199',
-//     user: 'root',
-//     password: 'cjmxc100',
-//     database: 'geragri-inventario',
+    // host: process.env.DB_HOST_DOCKER_G,
+    // user: process.env.DB_USER_DOCKER_G,
+    // password: process.env.DB_PASSWORD_DOCKER_G,
+    // database: process.env.DB_NAME_DOCKER_G,
 //     waitForConnections: true,
 //     connectionLimit: 10,
 //     queueLimit: 0

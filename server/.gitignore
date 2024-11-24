@@ -2,3 +2,4 @@
 /database
 .db.js
 .config.js
+.env
