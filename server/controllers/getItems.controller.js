@@ -67,7 +67,6 @@ export const getItemsQtyByWorker = async (req, res, next) => {
     }
 };
 
-
 export const getItemsQtyByDependece = async (req, res, next) => {
     try {
         const dependece = `%${req.query.q}%`; // Parche para que la búsqueda sea parcial con el operador LIKE

@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-
 import { parseDate } from '../../utils/datesUtils';
-
 
 const URL = 'http://localhost:3030/items'
 
@@ -108,7 +106,6 @@ const CodeSearchMod1 = () => {
       ) : (
         barcode && <p className="text-center text-danger">No se encontró ningún bien con el CODIGO PATRIMONIAL ingresado.</p>
       )}
-
     </div>
   )
 }

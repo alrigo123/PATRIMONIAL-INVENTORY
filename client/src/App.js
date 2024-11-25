@@ -23,6 +23,7 @@ import Error404Comp from './NavigationComponents/Error404Comp.js';
 
 //Handler Components
 import EditItemComp from './HandlerComponets/EditItemComp.js';
+import AddItemComp from './HandlerComponets/AddItemComp.js';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
@@ -44,9 +45,9 @@ function App() {
             <Route path="/import-excel" element={<GridImportedComp />} />
             {/* Ruta para páginas no encontradas */}
             <Route path="*" element={<Error404Comp />} />
-
             {/* Handler Components */}
             <Route path="/edit/:id" element={<EditItemComp />} />
+            <Route path="/add" element={<AddItemComp />} />
           </Routes>
         </main>
       </BrowserRouter>

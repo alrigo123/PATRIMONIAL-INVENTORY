@@ -28,7 +28,6 @@ const EditItemComp = () => {
     // Para navegar a otra página después del submit
     const navigate = useNavigate();
 
-
     // Cargar datos al montar el componente
     useEffect(() => {
         const fetchData = async () => {
@@ -73,7 +72,6 @@ const EditItemComp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Evita que la página se recargue -- Prevenir el comportamiento por defecto del formulario
-
         try {
             // Convertir fechas al formato STRING antes de enviar (simulación de envío)
             const payload = {
@@ -95,7 +93,6 @@ const EditItemComp = () => {
                     // Después de que el usuario haga clic en "Aceptar", redirigir a otra página
                     navigate('/codigo-patrimonial');
                 });
-
             } else {
                 // alert('Error de API');
                 Swal.fire({
@@ -129,8 +126,6 @@ const EditItemComp = () => {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
-
-    
 
     return (
         <div className="container mt-5">
@@ -301,7 +296,6 @@ const EditItemComp = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div className="text-center mt-4">
                             <button type="submit" className="btn btn-success me-3">
                                 Guardar Cambios
@@ -314,8 +308,6 @@ const EditItemComp = () => {
                 </div>
             </div>
         </div>
-
-
     );
 };
 

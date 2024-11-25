@@ -1,10 +1,6 @@
 import { createPool } from 'mysql2/promise'; //pool to use 
-
 import { config } from 'dotenv';
-
-// Cargar las variables del archivo .env
-config();
-
+config(); //Cargar las variables del archivo .env
 
 // Local Host
 // const pool = new createPool({
@@ -65,4 +61,4 @@ async function checkConnection() {
 // Llamar a la función
 checkConnection();
 
-export default pool
+export default pool;
