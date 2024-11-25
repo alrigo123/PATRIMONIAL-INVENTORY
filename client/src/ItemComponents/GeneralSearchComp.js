@@ -37,7 +37,6 @@ const GeneralSearchComp = () => {
                         setIsLoading(false); // Termina la carga
                     }
                 };
-
                 fetchItems();
             } else {
                 setResults([]); // Si el input está vacío, limpia la vista

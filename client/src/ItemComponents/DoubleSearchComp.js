@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 const URI = 'http://localhost:3030/items';
@@ -7,55 +7,80 @@ const DoubleSearchComp = () => {
     const [trabajador, setTrabajador] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [items, setItems] = useState([]);
+    const [isLoading, setIsLoading] = useState(false); // Estado para manejar la carga
+    const debounceTimeout = useRef(null); // Referencia para el setTimeout
 
     // useEffect para realizar la búsqueda cada vez que cambian trabajador o descripcion
     useEffect(() => {
-        const fetchItems = async () => {
+        if (debounceTimeout.current) {
+            clearTimeout(debounceTimeout.current)
+        }
+        debounceTimeout.current = setTimeout(() => {
             if (trabajador !== '' || descripcion !== '') {
-                try {
-                    // Realizamos la consulta a la API enviando trabajador y descripcion como parámetros
-                    const response = await axios.get(`${URI}/filter`, {
-                        params: { trabajador, descripcion },
-                    });
-                    setItems(response.data); // Guardamos los resultados en el estado
-                } catch (error) {
-                    console.error('Error al obtener los ítems:', error);
-                    setItems([]); // Limpiamos la lista en caso de error
+                const fetchItems = async () => {
+                    setIsLoading(true);
+                    try {
+                        // Realizamos la consulta a la API enviando trabajador y descripcion como parámetros
+                        const response = await axios.get(`${URI}/filter`, {
+                            params: { trabajador, descripcion },
+                        });
+                        setItems(response.data); // Guardamos los resultados en el estado
+                    } catch (error) {
+                        console.error('Error al obtener los ítems:', error);
+                        setItems([]); // Limpiamos la lista en caso de error
+                    } finally {
+                        setIsLoading(false);
+                    }
                 }
+                fetchItems();
             } else {
                 setItems([]); // Limpiamos la lista si ambos campos están vacíos
             }
-        };
-        fetchItems();
-    }, [trabajador, descripcion]); 
+        }, 700)
+        return () => {
+            if (debounceTimeout.current) {
+                clearTimeout(debounceTimeout.current);
+            }
+        }
+
+    }, [trabajador, descripcion]);
 
 
     return (
         <div className="container my-4">
             <div className='row g-3'>
-                <h1 className="text-center mb-4">Filtrar trabajador e item</h1>
+                <h2 className="text-center mb-4 fw-bold">FILTRAR POR TRABAJADOR E ITEM</h2>
                 <div className='col-5'>
                     <input
-                        className="form-control mb-4"
                         type="text"
                         placeholder="Buscar por Trabajador"
                         value={trabajador}
                         onChange={(e) => setTrabajador(e.target.value)}
+                        className="form-control mb-4 fw-bold"
+                        style={{ marginBottom: '20px', padding: '10px' }}
                     />
                 </div>
                 <div className='col-5'>
                     <input
-                        className="form-control mb-4"
                         type="text"
                         placeholder="Buscar por Descripción"
                         value={descripcion}
                         onChange={(e) => setDescripcion(e.target.value)}
+                        className="form-control mb-4 fw-bold"
+                        style={{ marginBottom: '20px', padding: '10px' }}
                     />
                 </div>
             </div>
 
             <div>
-                {items.length > 0 ? (
+                {/* Muestra un spinner de carga cuando se está realizando la búsqueda */}
+                {isLoading ? (
+                    <div className="text-center">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Buscando...</span>
+                        </div>
+                    </div>
+                ) : items.length > 0 ? (
                     <div>
                         <table className="w-auto table table-striped table-bordered align-middle" style={{ width: '100%', tableLayout: 'fixed' }}>
                             <thead className="thead-dark">
@@ -95,7 +120,7 @@ const DoubleSearchComp = () => {
                         </table>
                     </div>
                 ) : (
-                    items && <p className="text-center text-danger ">No se encontraron items con los datos del trabajador.</p>
+                    items && <p className="text-center text-danger ">No se encontraron items con los datos.</p>
                 )}
             </div>
         </div>

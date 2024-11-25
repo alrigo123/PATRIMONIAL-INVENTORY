@@ -9,8 +9,8 @@ export const getAllItems = async (req, res, next) => {
 
         const [rows] = await pool.query(
             'SELECT * FROM item ORDER BY N ASC LIMIT ? OFFSET ?',
-            [limit, offset] 
-        ); 
+            [limit, offset]
+        );
 
         const [totalRows] = await pool.query('SELECT COUNT(*) as total FROM item');
         const total = totalRows[0].total;
@@ -25,12 +25,12 @@ export const getItemByCodePat = async (req, res, next) => {
     try {
         const id = req.params.id
         const [row] = await pool.query("SELECT * FROM item WHERE CODIGO_PATRIMONIAL = ?", [id]); //with the [] just get an array with the components neede, without that give us more rows
-        
-        // console.log(row) 
+
+        console.log(row)
 
         // if (!row.length) return res.status(404).json({ message: 'Item not found' })
         if (!row.length) return res.status(404).json({ message: 'Item not found' })
- 
+
         res.json(row[0])
         // res.json({ item :  row[0].id })
     } catch (error) {
@@ -40,8 +40,8 @@ export const getItemByCodePat = async (req, res, next) => {
 
 export const getItemsQtyByWorker = async (req, res, next) => {
     try {
-        const trabajador = req.query.q; 
-        // const trabajador = `%${req.query.q}%`; 
+        // const trabajador = req.query.q;
+        const trabajador = `%${req.query.q}%`;
         const [rows] = await pool.query(`
             SELECT 
                 TRABAJADOR,
@@ -51,7 +51,7 @@ export const getItemsQtyByWorker = async (req, res, next) => {
             FROM 
                 item
             WHERE 
-                MATCH(TRABAJADOR) AGAINST(? IN BOOLEAN MODE)
+                TRABAJADOR LIKE ?
             GROUP BY 
                 TRABAJADOR,
                 DESCRIPCION,
@@ -70,7 +70,8 @@ export const getItemsQtyByWorker = async (req, res, next) => {
 
 export const getItemsQtyByDependece = async (req, res, next) => {
     try {
-        const dependece = req.query.q; // Parche para que la búsqueda sea parcial con el operador LIKE
+        const dependece = `%${req.query.q}%`; // Parche para que la búsqueda sea parcial con el operador LIKE
+        // const dependece = req.query.q; 
         const [rows] = await pool.query(`
             SELECT 
                 TRABAJADOR,
@@ -80,7 +81,7 @@ export const getItemsQtyByDependece = async (req, res, next) => {
             FROM 
                 item
             WHERE 
-                MATCH(DEPENDENCIA) AGAINST(? IN BOOLEAN MODE)
+            DEPENDENCIA LIKE ?
             GROUP BY 
                 TRABAJADOR,
                 DESCRIPCION,

@@ -44,9 +44,7 @@ app.use(routes)
 app.use('/items', item_routes)
 app.use('/export', export_reports)
 
-const puerto = process.env.SERVER_PORT
-
-process.env.DB_DOCKER_USER,
+const puerto = process.env.SERVER_PORT;
 
     app.listen(puerto, () => {
         console.log(`listening on http://localhost:${puerto}`);

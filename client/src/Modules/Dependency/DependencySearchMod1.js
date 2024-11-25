@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-const URL = 'http://localhost:3030/items'
-
-const WorkerSearchMod1 = () => {
+const DependencySearchMod1 = () => {
     const [searchTerm1, setSearchTerm1] = useState(''); // Valor del primer buscador
     const [results1, setResults1] = useState([]); // Resultados de la primera búsqueda
     const [isLoading, setIsLoading] = useState(false); // Estado para manejar la carga
@@ -14,17 +12,16 @@ const WorkerSearchMod1 = () => {
         setSearchTerm1(e.target.value);
     };
 
-    // useEffect para la primera búsqueda
     useEffect(() => {
         if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
+            clearTimeout(debounceTimeout.current)
         }
         debounceTimeout.current = setTimeout(() => {
             if (searchTerm1 !== '') {
                 const fetchItems1 = async () => {
                     setIsLoading(true);
                     try {
-                        const response = await axios.get(`${URL}/worker?q=${searchTerm1}`);
+                        const response = await axios.get(`http://localhost:3030/items/dependency?q=${searchTerm1}`);
                         setResults1(response.data);
                     } catch (error) {
                         console.log('Error al obtener los items:', error);
@@ -33,14 +30,14 @@ const WorkerSearchMod1 = () => {
                         setIsLoading(false);
                     }
                 }
-                fetchItems1();
+                fetchItems1()
             } else {
-                setResults1([])
+                setResults1([]);
             }
         }, 700)
         return () => {
             if (debounceTimeout.current) {
-                clearTimeout(debounceTimeout.current)
+                clearTimeout(debounceTimeout.current);
             }
         }
     }, [searchTerm1]);
@@ -48,14 +45,14 @@ const WorkerSearchMod1 = () => {
     return (
         <div>
             {/* Primer buscador */}
-            <h5 className='text-lg-start fw-bold'>BIENES CON CODIGO PATRIMONIAL DEL TRABAJADOR</h5>
+            <h5 className='text-lg-start fw-bold'>ITEMS CON CODIGO PATRIMONIAL DE LA DEPENDENCIA</h5>
             <input
                 type="text"
-                placeholder="Ingrese datos de trabajador (Apellidos y/o Nombres)"
+                placeholder="Ingrese dependencia"
                 value={searchTerm1}
                 onChange={handleInputChange1}
-                className="form-control mb-3 fw-bold"
-                style={{ marginBottom: '20px',  padding: '10px' }}
+                className="form-control mb-4 fw-bold"
+                style={{ marginBottom: '20px', padding: '10px' }}
             />
 
             {/* Muestra un spinner de carga cuando se está realizando la búsqueda */}
@@ -65,22 +62,20 @@ const WorkerSearchMod1 = () => {
                         <span className="visually-hidden">Buscando...</span>
                     </div>
                 </div>
-
             ) : results1.length > 0 ? (
                 <div>
-                    <h3 className='fw-semibold'>BIENES EN PODER DE <strong>{searchTerm1}</strong> </h3>
+                    <h3 className='fw-semibold'>ITEMS EN DEPENDENCIA <strong>{searchTerm1}</strong> </h3>
                     <table className="w-auto table table-striped table-bordered align-middle" style={{ width: '100%', tableLayout: 'fixed' }}>
                         <thead className="thead-dark">
                             <tr>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Código Patrimonial</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Descripción</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Trabajador</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Dependencia</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Fecha de Compra</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Fecha de Alta</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>CODIGO PATRIMONIAL</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DESCRIPCION</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DEPENDENCIA</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>TRABAJADOR</th>
                                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Estado</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Disposición</th>
-                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Situación</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DISPOSICION</th>
+                                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>ACCION</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -88,13 +83,11 @@ const WorkerSearchMod1 = () => {
                                 <tr key={index}>
                                     <td>{item.CODIGO_PATRIMONIAL}</td>
                                     <td>{item.DESCRIPCION}</td>
-                                    <td>{item.TRABAJADOR}</td>
                                     <td>{item.DEPENDENCIA}</td>
-                                    <td >{item.FECHA_COMPRA ? item.FECHA_COMPRA : 'No Registra'}</td>
-                                    <td>{item.FECHA_ALTA ? item.FECHA_ALTA : 'No Registra'}</td>
+                                    <td>{item.TRABAJADOR}</td>
                                     <td>
                                         {item.ESTADO === 0 ? (
-                                            <span style={{ color: 'red', fontWeight: 'bold' }}> No Patrimonizado</span>
+                                            <span style={{ color: 'red', fontWeight: 'bold' }}>No Patrimonizado</span>
                                         ) : (
                                             <span style={{ color: 'green', fontWeight: 'bold' }}>Patrimonizado</span>
                                         )}
@@ -119,10 +112,10 @@ const WorkerSearchMod1 = () => {
                     </table>
                 </div>
             ) : (
-                searchTerm1 && <p className="text-center text-danger ">No se encontraron bienes con los datos del trabajador.</p>
+                searchTerm1 && <p className="text-center text-danger">No se encontraron items con los datos de la dependencia.</p>
             )}
         </div>
     )
 }
 
-export default WorkerSearchMod1
+export default DependencySearchMod1
