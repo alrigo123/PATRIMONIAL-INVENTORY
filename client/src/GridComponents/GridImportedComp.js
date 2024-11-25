@@ -137,7 +137,6 @@ const GridImportedComp = () => {
     }
   };
 
-
   return (
     <div className="container mt-4">
       {/* CALL COMPONENT TO INIT WHEN PAGE IS LOADING */}
@@ -189,25 +188,19 @@ const GridImportedComp = () => {
           </ul>
           <div className="mt-4">
 
-              <Spreadsheet
-                data={sheetsData[currentSheet]?.map((row, rowIndex) => // Aquí se agrega rowIndex
-                  row.map((cell, colIndex) => ({
-                    value: cell || '',
-                    onChange: (e) =>
-                      updateCellValue(currentSheet, rowIndex, colIndex, e.target.value), // Ahora rowIndex está definido
-                  }))
-                ) || []}
-                onChange={(data) => {
-                  console.log('Datos actualizados:', data);
-                }}
-              />
-
-
-
+            <Spreadsheet
+              data={sheetsData[currentSheet]?.map((row, rowIndex) => // Aquí se agrega rowIndex
+                row.map((cell, colIndex) => ({
+                  value: cell || '',
+                  onChange: (e) =>
+                    updateCellValue(currentSheet, rowIndex, colIndex, e.target.value), // Ahora rowIndex está definido
+                }))
+              ) || []}
+              onChange={(data) => {
+                console.log('Datos actualizados:', data);
+              }}
+            />
           </div>
-
-
-
           {/* BUTTON TO SEND TO DATABASE */}
           <div className="text-center mt-1 mb-3">
             <button

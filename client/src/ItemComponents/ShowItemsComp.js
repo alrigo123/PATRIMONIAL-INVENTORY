@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { parseDate } from '../utils/datesUtils'
 import ExportReportsDispoMod from '../Modules/Export/ExportReportsDispoMod';
 import ExportReportsStateMod from '../Modules/Export/ExportReportsStateMod';
+import ExportReportsSituaMod from '../Modules/Export/ExportReportsSituaMod';
 
 const URI = 'http://localhost:3030/items';
 
@@ -15,7 +17,7 @@ const ShowItemsComp = () => {
     // States para los filtros
     const [filterEstado, setFilterEstado] = useState('all');
     const [filterDisposicion, setFilterDisposicion] = useState('all');
-
+    const [filterSituacion, setFilterSituacion] = useState('all');
 
     // Obtener todos los items de la API con paginación
     const getItems = async () => {
@@ -32,7 +34,7 @@ const ShowItemsComp = () => {
 
     useEffect(() => {
         getItems();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, limit]);
 
     // Calcular total de páginas
@@ -48,20 +50,21 @@ const ShowItemsComp = () => {
             filterDisposicion === 'all' ||
             (filterDisposicion === 'available' && item.DISPOSICION === 1) ||
             (filterDisposicion === 'not_available' && item.DISPOSICION === 0);
-        return estadoFilter && disposicionFilter;
+        const situacionFilter =
+            filterSituacion === 'all' ||
+            (filterSituacion === 'verified' && item.SITUACION === 1) ||
+            (filterSituacion === 'missing' && item.SITUACION === 0);
+        return estadoFilter && disposicionFilter && situacionFilter;
     });
 
     return (
         <div className="container">
             <div className="row">
                 <div className="col mt-3">
-
                     {/* Controles para seleccionar los filtros */}
                     <div className="row mt-2">
-                        <div className="mb-3 col-5 text-start">
-                            <label htmlFor="filter1" className="form-label fw-semibold">
-                                <h5>Filtrar Por Estado</h5>
-                            </label>
+                        <div className="mb-3 col-4 text-start">
+                            <h5 className='fw-semibold mt-2 '>Filtrar por Estado</h5>
                             <select
                                 id="filter1"
                                 className="form-select fw-bolder"
@@ -69,14 +72,12 @@ const ShowItemsComp = () => {
                                 onChange={(e) => setFilterEstado(e.target.value)}
                             >
                                 <option value="all">Todos</option>
-                                <option value="registered">Registrado</option>
-                                <option value="not_registered">No Registrado</option>
+                                <option value="registered">Patrimonizado</option>
+                                <option value="not_registered">No Patrimonizado</option>
                             </select>
                         </div>
-                        <div className="mb-3 col-5 text-start">
-                            <label htmlFor="filter2" className="form-label fw-semibold">
-                                <h5>Filtrar Por Disposición</h5>
-                            </label>
+                        <div className="mb-3 col-4 text-start">
+                        <h5 className='fw-semibold mt-2 '>Filtrar por Disposición</h5>
                             <select
                                 id="filter2"
                                 className="form-select fw-bolder"
@@ -84,8 +85,21 @@ const ShowItemsComp = () => {
                                 onChange={(e) => setFilterDisposicion(e.target.value)}
                             >
                                 <option value="all">Todos</option>
-                                <option value="available">Disponibles</option>
-                                <option value="not_available">No Disponibles</option>
+                                <option value="available">Funcional</option>
+                                <option value="not_available">No Funcional</option>
+                            </select>
+                        </div>
+                        <div className="mb-3 col-4 text-start">
+                        <h5 className='fw-semibold mt-2 '>Filtrar por Situación</h5>
+                            <select
+                                id="filter3"
+                                className="form-select fw-bolder"
+                                value={filterSituacion}
+                                onChange={(e) => setFilterSituacion(e.target.value)}
+                            >
+                                <option value="all">Todos</option>
+                                <option value="verified">Verificados</option>
+                                <option value="missing">Faltantes</option>
                             </select>
                         </div>
                     </div>
@@ -111,6 +125,7 @@ const ShowItemsComp = () => {
                     {/* Botones para exportar reportes */}
                     <ExportReportsStateMod />
                     <ExportReportsDispoMod />
+                    <ExportReportsSituaMod />
 
                     {/* TABLA DE DATOS */}
                     <table className="w-auto table table-striped table-bordered align-middle mt-3">
@@ -125,6 +140,7 @@ const ShowItemsComp = () => {
                                 <th>Fecha de Alta</th>
                                 <th>Estado</th>
                                 <th>Disposición</th>
+                                <th>Situación</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -135,10 +151,29 @@ const ShowItemsComp = () => {
                                     <td>{item.DESCRIPCION}</td>
                                     <td>{item.DEPENDENCIA}</td>
                                     <td>{item.TRABAJADOR}</td>
-                                    <td>{item.FECHA_REGISTRO}</td>
+                                    <td>{parseDate(item.FECHA_REGISTRO)}</td>
                                     <td>{item.FECHA_ALTA}</td>
-                                    <td>{item.ESTADO === 1 ? 'Registrado' : 'No Registrado'}</td>
-                                    <td>{item.DISPOSICION === 1 ? 'Si' : 'No'}</td>
+                                    <td>
+                                        {item.ESTADO === 0 ? (
+                                            <span style={{ color: 'red', fontWeight: 'bold' }}>No Patrimonizado</span>
+                                        ) : (
+                                            <span style={{ color: 'green', fontWeight: 'bold' }}>Patrimonizado</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {item.DISPOSICION === 0 ? (
+                                            <span style={{ color: 'red', fontWeight: 'bold' }}>No Funcional</span>
+                                        ) : (
+                                            <span style={{ color: 'green', fontWeight: 'bold' }}>Funcional</span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        {item.SITUACION === 0 ? (
+                                            <span style={{ color: 'red', fontWeight: 'bold' }}>Faltante</span>
+                                        ) : (
+                                            <span style={{ color: 'green', fontWeight: 'bold' }}>Verificado</span>
+                                        )}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

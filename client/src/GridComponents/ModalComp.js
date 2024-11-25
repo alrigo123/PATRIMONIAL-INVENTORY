@@ -6,7 +6,6 @@ import Modal from 'react-modal'; // Librería para modales
 Modal.setAppElement('#root');
 
 const ModalComp = () => {
-
   const [isModalOpen, setIsModalOpen] = useState(true); // Estado para el modal
 
   // Datos y columnas de ejemplo para el modal
@@ -72,9 +71,7 @@ const ModalComp = () => {
         >
           <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Cerrar</span>
         </button>
-
       </Modal>
-
     </div>
   )
 }

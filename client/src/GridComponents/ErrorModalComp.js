@@ -79,9 +79,7 @@ const ErrorModalComp = () => {
                 >
                     <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Cerrar</span>
                 </button>
-
             </Modal>
-
         </div>
     )
 }

@@ -9,9 +9,7 @@ export const updateDisposition = async (req, res) => {
             [DISPOSICION, id]
         );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Item not found' });
-        }
+        if (result.affectedRows === 0) return res.status(404).json({ message: 'Item not found' });
 
         res.json({ message: 'Disposition updated successfully' });
     } catch (error) {
@@ -28,9 +26,7 @@ export const updateSituation = async (req, res) => {
             [SITUACION, id]
         );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Item not found' });
-        }
+        if (result.affectedRows === 0) return res.status(404).json({ message: 'Item not found' });
 
         res.json({ message: 'Situation updated successfully' });
     } catch (error) {
@@ -41,12 +37,6 @@ export const updateSituation = async (req, res) => {
 export const getItemByCodePatAndUpdate = async (req, res, next) => {
     try {
         const id = req.params.id;
-
-        /* hacer una condicional de que si el id no es igual a 12 caracteres entonces ni busque nada */
-
-
-        // porque despues de 8 ya no quiere buscar
-
         // // Log para verificar el parámetro recibido
         // console.log('ID recibido:', id);
 
@@ -97,7 +87,6 @@ export const updateItem = async (req, res) => {
     const { id } = req.params;
     const { DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION,
         SITUACION } = req.body;
-
     try {
         // Consulta SQL para actualizar el item
         const [result] = await pool.query(
@@ -121,7 +110,7 @@ export const updateItem = async (req, res) => {
                 DISPOSICION, SITUACION,
                 id
             ]
-        ); 
+        );
 
         // Verificar si el ítem fue encontrado
         if (result.affectedRows === 0) {
@@ -129,14 +118,12 @@ export const updateItem = async (req, res) => {
             return res.status(404).json({ message: 'Item not found' });
         }
 
-
         res.json({ message: 'Item updated successfully' });
     } catch (error) {
         console.log("ERROR EN HANDLER: ", error)
         res.status(500).json({ message: 'Error updating item', error });
     }
 };
- 
 
 export const insertExcelData = async (req, res) => {
     const { data } = req.body; // The data array from the React frontend
@@ -176,6 +163,5 @@ export const insertExcelData = async (req, res) => {
         res.status(500).json({ message: 'Error inserting Excel data', error });
     }
 };
-
 
 // SELECT * FROM item WHERE TRABAJADOR LIKE '%ESTRADA CHILE%' AND ESTADO = 0;

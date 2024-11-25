@@ -42,9 +42,7 @@ const DoubleSearchComp = () => {
                 clearTimeout(debounceTimeout.current);
             }
         }
-
     }, [trabajador, descripcion]);
-
 
     return (
         <div className="container my-4">
@@ -71,7 +69,6 @@ const DoubleSearchComp = () => {
                     />
                 </div>
             </div>
-
             <div>
                 {/* Muestra un spinner de carga cuando se está realizando la búsqueda */}
                 {isLoading ? (
@@ -91,6 +88,7 @@ const DoubleSearchComp = () => {
                                     <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DEPENDENCIA</th>
                                     <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>ESTADO</th>
                                     <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>DISPOSICION</th>
+                                    <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>SITUACION</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,16 +100,23 @@ const DoubleSearchComp = () => {
                                         <td>{item.DEPENDENCIA}</td>
                                         <td>
                                             {item.ESTADO === 0 ? (
-                                                <span style={{ color: 'red', fontWeight: 'bold' }}>❌ No Registrado</span>
+                                                <span style={{ color: 'red', fontWeight: 'bold' }}>No Patrimonizado</span>
                                             ) : (
-                                                <span style={{ color: 'green', fontWeight: 'bold' }}>✅ Registrado</span>
+                                                <span style={{ color: 'green', fontWeight: 'bold' }}>Patrimonizado</span>
                                             )}
                                         </td>
                                         <td>
                                             {item.DISPOSICION === 0 ? (
-                                                <span style={{ color: 'red', fontWeight: 'bold' }}>❌ No</span>
+                                                <span style={{ color: 'red', fontWeight: 'bold' }}>No Funcional</span>
                                             ) : (
-                                                <span style={{ color: 'green', fontWeight: 'bold' }}>✅ Si</span>
+                                                <span style={{ color: 'green', fontWeight: 'bold' }}>Funcional</span>
+                                            )}
+                                        </td>
+                                        <td>
+                                            {item.SITUACION === 0 ? (
+                                                <span style={{ color: 'red', fontWeight: 'bold' }}>Faltante</span>
+                                            ) : (
+                                                <span style={{ color: 'green', fontWeight: 'bold' }}>Verificado</span>
                                             )}
                                         </td>
                                     </tr>
