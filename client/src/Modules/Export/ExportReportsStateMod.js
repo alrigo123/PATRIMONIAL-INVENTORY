@@ -70,7 +70,7 @@ const ExportReportsStateMod = () => {
       fileName: "reporte-no-patrimonizado",
     },
     {
-      name: "REPORTE CONSOLIDADO PATRIMONIZADO",
+      name: "REPORTE CONSOLIDADO ESTADO",
       url: `${API_export}/state`,
       formatCallbacks: {
         FECHA_REGISTRO: formatDate,

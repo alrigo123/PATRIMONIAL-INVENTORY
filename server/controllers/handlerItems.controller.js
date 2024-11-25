@@ -125,20 +125,74 @@ export const updateItem = async (req, res) => {
     }
 };
 
+// export const insertExcelData = async (req, res) => {
+//     const { data } = req.body; // The data array from the React frontend
+//     try {
+//         // Start a transaction to ensure atomicity
+//         await pool.query('START TRANSACTION');
+
+//         // Iterate over each row of data and insert into the database
+//         for (let row of data) {
+//             const { CODIGO_PATRIMONIAL, DESCRIPCION,
+//                 TRABAJADOR, DEPENDENCIA, UBICACION,
+//                 FECHA_COMPRA, FECHA_ALTA } = row;
+
+//             // SQL query to insert the data into your 'item' table
+//             const [result] = await pool.query(
+//                 `INSERT INTO item (CODIGO_PATRIMONIAL, DESCRIPCION,
+//                 TRABAJADOR, DEPENDENCIA, UBICACION,
+//                 FECHA_COMPRA, FECHA_ALTA) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+//                 [CODIGO_PATRIMONIAL, DESCRIPCION,
+//                     TRABAJADOR, DEPENDENCIA, UBICACION,
+//                     FECHA_COMPRA, FECHA_ALTA]
+//             );
+
+//             // If the insert fails (affectedRows === 0), you can handle it as needed
+//             if (result.affectedRows === 0) {
+//                 return res.status(400).json({ message: 'Failed to insert row' });
+//             }
+//         }
+
+//         // Commit the transaction
+//         await pool.query('COMMIT');
+
+//         res.json({ message: 'Excel data inserted successfully' });
+//     } catch (error) {
+//         // If an error occurs, rollback the transaction to avoid partial inserts
+//         await pool.query('ROLLBACK');
+//         res.status(500).json({ message: 'Error inserting Excel data', error });
+//     }
+// };
+
+// SELECT * FROM item WHERE TRABAJADOR LIKE '%ESTRADA CHILE%' AND ESTADO = 0;
+
 export const insertExcelData = async (req, res) => {
-    const { data } = req.body; // The data array from the React frontend
+    const { data } = req.body; // Datos enviados desde el frontend
     try {
         // Start a transaction to ensure atomicity
         await pool.query('START TRANSACTION');
 
-        // Iterate over each row of data and insert into the database
         for (let row of data) {
             const { CODIGO_PATRIMONIAL, DESCRIPCION,
                 TRABAJADOR, DEPENDENCIA, UBICACION,
                 FECHA_COMPRA, FECHA_ALTA } = row;
 
-            // SQL query to insert the data into your 'item' table
-            const [result] = await pool.query(
+            // Verificar si el código ya existe en la base de datos
+            const [existingRows] = await pool.query(
+                'SELECT 1 FROM item WHERE CODIGO_PATRIMONIAL = ?',
+                [CODIGO_PATRIMONIAL]
+            );
+
+            if (existingRows.length > 0) {
+                // Si el código ya existe, devuelve un mensaje de error
+                await pool.query('ROLLBACK');
+                return res.status(400).json({
+                    message: `El código patrimonial ${CODIGO_PATRIMONIAL} ya existe en la base de datos.`
+                });
+            }
+
+            // Insertar los datos si no hay duplicados
+            await pool.query(
                 `INSERT INTO item (CODIGO_PATRIMONIAL, DESCRIPCION,
                 TRABAJADOR, DEPENDENCIA, UBICACION,
                 FECHA_COMPRA, FECHA_ALTA) VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -146,22 +200,14 @@ export const insertExcelData = async (req, res) => {
                     TRABAJADOR, DEPENDENCIA, UBICACION,
                     FECHA_COMPRA, FECHA_ALTA]
             );
-
-            // If the insert fails (affectedRows === 0), you can handle it as needed
-            if (result.affectedRows === 0) {
-                return res.status(400).json({ message: 'Failed to insert row' });
-            }
         }
 
         // Commit the transaction
         await pool.query('COMMIT');
-
-        res.json({ message: 'Excel data inserted successfully' });
+        res.json({ message: 'Datos importados correctamente.' });
     } catch (error) {
-        // If an error occurs, rollback the transaction to avoid partial inserts
+        // Rollback en caso de error
         await pool.query('ROLLBACK');
-        res.status(500).json({ message: 'Error inserting Excel data', error });
+        res.status(500).json({ message: 'Error al importar datos.', error });
     }
 };
-
-// SELECT * FROM item WHERE TRABAJADOR LIKE '%ESTRADA CHILE%' AND ESTADO = 0;

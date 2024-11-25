@@ -56,7 +56,7 @@ const ExportReportsSituaMod = () => {
       url: `${API_export}/situation/true`,
       formatCallbacks: {
         FECHA_REGISTRO: formatDate,
-        ESTADO: mapEstado,
+        SITUACION: mapEstado,
       },
       fileName: "reporte-verificados",
     },
@@ -65,7 +65,7 @@ const ExportReportsSituaMod = () => {
       url: `${API_export}/situation/false`,
       formatCallbacks: {
         FECHA_REGISTRO: formatDate,
-        ESTADO: mapEstado,
+        SITUACION: mapEstado,
       },
       fileName: "reporte-faltantes",
     },
@@ -74,7 +74,7 @@ const ExportReportsSituaMod = () => {
       url: `${API_export}/situation`,
       formatCallbacks: {
         FECHA_REGISTRO: formatDate,
-        ESTADO: mapEstado,
+        SITUACION: mapEstado,
       },
       fileName: "reporte-situacion-consolidado",
     },

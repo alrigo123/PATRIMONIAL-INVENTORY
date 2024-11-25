@@ -26,17 +26,17 @@ export const getItemByCodePat = async (req, res, next) => {
         const id = req.params.id
         const [row] = await pool.query("SELECT * FROM item WHERE CODIGO_PATRIMONIAL = ?", [id]); //with the [] just get an array with the components neede, without that give us more rows
 
-        console.log(row)
+        console.log("DEL BACKEND:",row)
 
         // if (!row.length) return res.status(404).json({ message: 'Item not found' })
         if (!row.length) return res.status(404).json({ message: 'Item not found' })
-
-        res.json(row[0])
+        res.json(row[0])  
+        // res.json(row)  //LLAMA A TODOS LOS ITEMS , PERO COMO E REPITE SU COD NO PUEDE PRINTEAR EN EL FORM
         // res.json({ item :  row[0].id })
     } catch (error) {
         return res.status(500).json(error)
     }
-}
+}  
 
 export const getItemsQtyByWorker = async (req, res, next) => {
     try {

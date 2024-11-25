@@ -4,6 +4,7 @@ import { parseDate } from '../utils/datesUtils'
 import ExportReportsDispoMod from '../Modules/Export/ExportReportsDispoMod';
 import ExportReportsStateMod from '../Modules/Export/ExportReportsStateMod';
 import ExportReportsSituaMod from '../Modules/Export/ExportReportsSituaMod';
+import ExportReportsMod from '../Modules/Export/ExportReportsMod';
 
 const URI = 'http://localhost:3030/items';
 
@@ -126,7 +127,8 @@ const ShowItemsComp = () => {
                     <ExportReportsStateMod />
                     <ExportReportsDispoMod />
                     <ExportReportsSituaMod />
-
+                    <ExportReportsMod />
+                    
                     {/* TABLA DE DATOS */}
                     <table className="w-auto table table-striped table-bordered align-middle mt-3">
                         <thead className="table-primary">
