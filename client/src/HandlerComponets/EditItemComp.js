@@ -71,6 +71,7 @@ const EditItemComp = () => {
     };
 
     const handleSubmit = async (e) => {
+
         e.preventDefault(); // Evita que la página se recargue -- Prevenir el comportamiento por defecto del formulario
         try {
             // Convertir fechas al formato STRING antes de enviar (simulación de envío)
@@ -134,7 +135,7 @@ const EditItemComp = () => {
                     <h3 className="mb-0">Editar Información de <strong>"{formData.DESCRIPCION}"</strong></h3>
                 </div>
                 <div className="card-body">
-                    <form method="PUT" onSubmit={handleSubmit}>
+                    <form method="post" onSubmit={handleSubmit}>
                         <div className="row">
                             <div className="col-md-6 mb-3">
                                 <label className="form-label">Código Patrimonial</label>
@@ -154,6 +155,7 @@ const EditItemComp = () => {
                                     name="DESCRIPCION"
                                     value={formData.DESCRIPCION}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -167,6 +169,7 @@ const EditItemComp = () => {
                                     name="TRABAJADOR"
                                     value={formData.TRABAJADOR}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
@@ -177,6 +180,7 @@ const EditItemComp = () => {
                                     name="DEPENDENCIA"
                                     value={formData.DEPENDENCIA}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -190,6 +194,7 @@ const EditItemComp = () => {
                                     name="UBICACION"
                                     value={formData.UBICACION}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
@@ -228,7 +233,7 @@ const EditItemComp = () => {
                             </div>
                         </div>
 
-                        <div className="row">
+                        <div className="row mt-3">
                             <div className="mb-3 text-center">
                                 <label htmlFor="estadoSwitch" className="form-label me-2 fw-bold">Estado:</label>
                                 <div className="form-check form-switch d-inline-flex align-items-center">

@@ -19,6 +19,7 @@ import {
   insertExcelData,
   getItemByCodePatAndUpdate,
   updateItem,
+  addItem
 } from "../controllers/handlerItems.controller.js";
 
 const router = Router();
@@ -45,5 +46,6 @@ router.put("/edit/:id", updateItem);
 
 //POST REQUEST
 router.post("/imported", insertExcelData);
+router.post("/add", addItem);
 
 export default router;

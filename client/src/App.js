@@ -27,6 +27,8 @@ import AddItemComp from './HandlerComponets/AddItemComp.js';
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
+import DataSearchComponent from './DataSearchComponent.js';
+
 function App() {
   return (
     <div className="App">
@@ -43,6 +45,7 @@ function App() {
             <Route path="/dependencia" element={<DependencySearchComp />} />
             <Route path="/doble-busqueda" element={<DoubleSearchComp />} />
             <Route path="/import-excel" element={<GridImportedComp />} />
+            <Route path="/test" element={<DataSearchComponent />} />
             {/* Ruta para páginas no encontradas */}
             <Route path="*" element={<Error404Comp />} />
             {/* Handler Components */}

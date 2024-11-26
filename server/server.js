@@ -14,7 +14,7 @@ const limiter = rateLimit({
     max: 100, // Límite de 100 peticiones por IP
     message: 'Demasiadas solicitudes desde esta IP, por favor inténtalo de nuevo más tarde.'
 });
-
+  
 const app = express();
 
 //Middleware

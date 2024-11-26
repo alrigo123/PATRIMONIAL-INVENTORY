@@ -125,6 +125,7 @@ export const updateItem = async (req, res) => {
     }
 };
 
+
 // export const insertExcelData = async (req, res) => {
 //     const { data } = req.body; // The data array from the React frontend
 //     try {
@@ -209,5 +210,68 @@ export const insertExcelData = async (req, res) => {
         // Rollback en caso de error
         await pool.query('ROLLBACK');
         res.status(500).json({ message: 'Error al importar datos.', error });
+    }
+};
+
+export const addItem = async (req, res) => {
+    const {
+        codigoPatrimonial,
+        descripcion,
+        trabajador,
+        dependencia,
+        ubicacion,
+        FECHA_COMPRA,
+        FECHA_ALTA,
+        disposicion,
+        situacion
+    } = req.body;
+
+    try {
+        // Verificar si el código patrimonial ya existe
+        const [existingRows] = await pool.query(
+            'SELECT 1 FROM item WHERE CODIGO_PATRIMONIAL = ?',
+            [codigoPatrimonial]
+        );
+
+        if (existingRows.length > 0) {
+            return res.status(400).json({
+                message: `El código patrimonial ${codigoPatrimonial} ya existe en la base de datos.`,
+            });
+        }
+
+        // Insertar nuevo bien patrimonial
+        await pool.query(
+            `INSERT INTO item (
+                CODIGO_PATRIMONIAL,
+                DESCRIPCION,
+                TRABAJADOR,
+                DEPENDENCIA,
+                UBICACION,
+                FECHA_COMPRA,
+                FECHA_ALTA,
+                DISPOSICION,
+                SITUACION
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                codigoPatrimonial,
+                descripcion,
+                trabajador,
+                dependencia,
+                ubicacion,
+                FECHA_COMPRA || null,
+                FECHA_ALTA || null,
+                disposicion,
+                situacion
+            ]
+        );
+
+        res.json({
+            message: 'Bien patrimonial agregado correctamente.',
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error al agregar el bien patrimonial.',
+            error,
+        });
     }
 };
