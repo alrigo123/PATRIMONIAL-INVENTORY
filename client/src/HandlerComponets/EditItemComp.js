@@ -71,7 +71,6 @@ const EditItemComp = () => {
     };
 
     const handleSubmit = async (e) => {
-
         e.preventDefault(); // Evita que la página se recargue -- Prevenir el comportamiento por defecto del formulario
         try {
             // Convertir fechas al formato STRING antes de enviar (simulación de envío)

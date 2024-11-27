@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { formatToDateInput, formatToDatabase, parseDate } from "../utils/datesUtils";
+import { formatToDatabase } from "../utils/datesUtils";
 import Swal from "sweetalert2"; // Importa SweetAlert2
 
 const AddItemComp = () => {
-    const [disposicion, setDisposicion] = useState(false);
-    const [situacion, setSituacion] = useState(false);
-
     // Para navegar a otra página después del submit
     const navigate = useNavigate();
 

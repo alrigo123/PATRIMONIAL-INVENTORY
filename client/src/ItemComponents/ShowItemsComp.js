@@ -6,7 +6,7 @@ import ExportReportsStateMod from '../Modules/Export/ExportReportsStateMod';
 import ExportReportsSituaMod from '../Modules/Export/ExportReportsSituaMod';
 import ExportReportsMod from '../Modules/Export/ExportReportsMod';
 
-const URI = 'http://localhost:3030/items';
+const URI = process.env.REACT_APP_API_URL_ITEMS;
 
 const ShowItemsComp = () => {
     // State para almacenar los items
@@ -19,6 +19,11 @@ const ShowItemsComp = () => {
     const [filterEstado, setFilterEstado] = useState('all');
     const [filterDisposicion, setFilterDisposicion] = useState('all');
     const [filterSituacion, setFilterSituacion] = useState('all');
+
+    console.log("api:", URI);
+    console.log("api_process:", process.env.REACT_APP_API_URL_ITEMS);
+
+    // throw Error                                                                                                                    
 
     // Obtener todos los items de la API con paginación
     const getItems = async () => {

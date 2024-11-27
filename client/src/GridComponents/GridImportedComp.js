@@ -14,26 +14,37 @@ const GridImportedComp = () => {
   const [currentSheet, setCurrentSheet] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showModalButton, setShowModalButton] = useState(false);
+  const [progress, setProgress] = useState(0); // Nueva barra de progreso
+  const [fileLoaded, setFileLoaded] = useState(false); // Estado para controlar el mensaje
+  const [loading, setLoading] = useState(false); // Estado para controlar la visibilidad de la barra y mensaje
+
 
   const expectedColumns = ['CODIGO_PATRIMONIAL', 'DESCRIPCION', 'TRABAJADOR', 'DEPENDENCIA', 'UBICACION', 'FECHA_COMPRA', 'FECHA_ALTA'];
 
   const handleFileUpload = (e) => {
+    setProgress(10); // Progreso inicial
+    setLoading(true); // Inicia la carga (barra y mensaje visibles)
     const file = e.target.files[0];
 
     if (!file) {
       alert('Por favor seleccionar un archivo.');
       document.querySelector('input[type="file"]').value = '';
+      setProgress(0); // Restablecer progreso si hay error
       return;
     }
 
     if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
       alert('Por favor, carga un archivo de formato Excel.');
       document.querySelector('input[type="file"]').value = '';
+      setProgress(0); // Restablecer progreso si hay error
       return;
     }
 
+    setProgress(30); // Progreso después de validar el archivo
+
     const reader = new FileReader();
     reader.onload = (event) => {
+      setProgress(50); // Progreso mientras se procesa el archivo
       const workbook = XLSX.read(event.target.result, { type: 'binary' });
       const sheets = {};
 
@@ -54,11 +65,22 @@ const GridImportedComp = () => {
 
       if (!isValid) {
         document.querySelector('input[type="file"]').value = ''; // Limpiar archivo cargado
+        setProgress(0); // Restablecer progreso si la validación falla
+        setLoading(false); // Detener la carga si hay error
         return; // No actualizar estado si hay errores
       }
       setSheetsData(sheets);
       setCurrentSheet(workbook.SheetNames[0]); // Default to the first sheet
+      setProgress(100); // Completar progreso
+
+      // Mostrar mensaje de archivo cargado y luego ocultarlo
+      setFileLoaded(true);
+      setTimeout(() => {
+        setFileLoaded(false);
+        setLoading(false); // Ocultar la barra y el mensaje después de 3 segundos
+      }, 2000); // El mensaje desaparece después de 3 segundos
     };
+
     reader.readAsArrayBuffer(file);
   };
 
@@ -160,7 +182,7 @@ const GridImportedComp = () => {
         text: 'Uno o más CODIGOS_PATRIMONIALES YA EXISTE en la base de datos',
         icon: 'error',
         confirmButtonText: 'Aceptar'
-    });
+      });
       // alert(`Hubo un problema al . \nUno o más CODIGOS_PATRIMONIALES ya existen registrados en la base de datos.`);
       // console.error("DATASHEET ERROR:", error.message);
     }
@@ -185,6 +207,30 @@ const GridImportedComp = () => {
           style={{ maxWidth: '300px', border: '1px solid #ccc', borderRadius: '5px', padding: '10px' }}
         />
       </div>
+
+      {/* Barra de Progreso */}
+      {loading && progress > 0 && (
+        <div className="progress mb-3" style={{ height: '20px' }}>
+          <div
+            className="progress-bar progress-bar-striped bg-success"
+            role="progressbar"
+            style={{ width: `${progress}%` }}
+            aria-valuenow={progress}
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            {progress}%
+          </div>
+        </div>
+      )}
+
+      {/* Mensaje de archivo cargado */}
+      {fileLoaded && (
+        <div className="alert alert-success text-center" role="alert">
+          <strong>Archivo cargado con éxito!</strong>
+        </div>
+      )}
+
 
       {errorMessage && (
         <div
