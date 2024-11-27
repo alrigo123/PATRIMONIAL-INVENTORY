@@ -9,9 +9,7 @@ export const updateDisposition = async (req, res) => {
             [DISPOSICION, id]
         );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Item not found' });
-        }
+        if (result.affectedRows === 0) return res.status(404).json({ message: 'Item not found' });
 
         res.json({ message: 'Disposition updated successfully' });
     } catch (error) {
@@ -28,9 +26,7 @@ export const updateSituation = async (req, res) => {
             [SITUACION, id]
         );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Item not found' });
-        }
+        if (result.affectedRows === 0) return res.status(404).json({ message: 'Item not found' });
 
         res.json({ message: 'Situation updated successfully' });
     } catch (error) {
@@ -41,12 +37,6 @@ export const updateSituation = async (req, res) => {
 export const getItemByCodePatAndUpdate = async (req, res, next) => {
     try {
         const id = req.params.id;
-
-        /* hacer una condicional de que si el id no es igual a 12 caracteres entonces ni busque nada */
-
-
-        // porque despues de 8 ya no quiere buscar
-
         // // Log para verificar el parámetro recibido
         // console.log('ID recibido:', id);
 
@@ -97,7 +87,6 @@ export const updateItem = async (req, res) => {
     const { id } = req.params;
     const { DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION,
         SITUACION } = req.body;
-
     try {
         // Consulta SQL para actualizar el item
         const [result] = await pool.query(
@@ -121,7 +110,7 @@ export const updateItem = async (req, res) => {
                 DISPOSICION, SITUACION,
                 id
             ]
-        ); 
+        );
 
         // Verificar si el ítem fue encontrado
         if (result.affectedRows === 0) {
@@ -129,29 +118,82 @@ export const updateItem = async (req, res) => {
             return res.status(404).json({ message: 'Item not found' });
         }
 
-
         res.json({ message: 'Item updated successfully' });
     } catch (error) {
         console.log("ERROR EN HANDLER: ", error)
         res.status(500).json({ message: 'Error updating item', error });
     }
 };
- 
+
+
+// export const insertExcelData = async (req, res) => {
+//     const { data } = req.body; // The data array from the React frontend
+//     try {
+//         // Start a transaction to ensure atomicity
+//         await pool.query('START TRANSACTION');
+
+//         // Iterate over each row of data and insert into the database
+//         for (let row of data) {
+//             const { CODIGO_PATRIMONIAL, DESCRIPCION,
+//                 TRABAJADOR, DEPENDENCIA, UBICACION,
+//                 FECHA_COMPRA, FECHA_ALTA } = row;
+
+//             // SQL query to insert the data into your 'item' table
+//             const [result] = await pool.query(
+//                 `INSERT INTO item (CODIGO_PATRIMONIAL, DESCRIPCION,
+//                 TRABAJADOR, DEPENDENCIA, UBICACION,
+//                 FECHA_COMPRA, FECHA_ALTA) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+//                 [CODIGO_PATRIMONIAL, DESCRIPCION,
+//                     TRABAJADOR, DEPENDENCIA, UBICACION,
+//                     FECHA_COMPRA, FECHA_ALTA]
+//             );
+
+//             // If the insert fails (affectedRows === 0), you can handle it as needed
+//             if (result.affectedRows === 0) {
+//                 return res.status(400).json({ message: 'Failed to insert row' });
+//             }
+//         }
+
+//         // Commit the transaction
+//         await pool.query('COMMIT');
+
+//         res.json({ message: 'Excel data inserted successfully' });
+//     } catch (error) {
+//         // If an error occurs, rollback the transaction to avoid partial inserts
+//         await pool.query('ROLLBACK');
+//         res.status(500).json({ message: 'Error inserting Excel data', error });
+//     }
+// };
+
+// SELECT * FROM item WHERE TRABAJADOR LIKE '%ESTRADA CHILE%' AND ESTADO = 0;
 
 export const insertExcelData = async (req, res) => {
-    const { data } = req.body; // The data array from the React frontend
+    const { data } = req.body; // Datos enviados desde el frontend
     try {
         // Start a transaction to ensure atomicity
         await pool.query('START TRANSACTION');
 
-        // Iterate over each row of data and insert into the database
         for (let row of data) {
             const { CODIGO_PATRIMONIAL, DESCRIPCION,
                 TRABAJADOR, DEPENDENCIA, UBICACION,
                 FECHA_COMPRA, FECHA_ALTA } = row;
 
-            // SQL query to insert the data into your 'item' table
-            const [result] = await pool.query(
+            // Verificar si el código ya existe en la base de datos
+            const [existingRows] = await pool.query(
+                'SELECT 1 FROM item WHERE CODIGO_PATRIMONIAL = ?',
+                [CODIGO_PATRIMONIAL]
+            );
+
+            if (existingRows.length > 0) {
+                // Si el código ya existe, devuelve un mensaje de error
+                await pool.query('ROLLBACK');
+                return res.status(400).json({
+                    message: `El código patrimonial ${CODIGO_PATRIMONIAL} ya existe en la base de datos.`
+                });
+            }
+
+            // Insertar los datos si no hay duplicados
+            await pool.query(
                 `INSERT INTO item (CODIGO_PATRIMONIAL, DESCRIPCION,
                 TRABAJADOR, DEPENDENCIA, UBICACION,
                 FECHA_COMPRA, FECHA_ALTA) VALUES (?, ?, ?, ?, ?, ?, ?)`,
@@ -159,23 +201,77 @@ export const insertExcelData = async (req, res) => {
                     TRABAJADOR, DEPENDENCIA, UBICACION,
                     FECHA_COMPRA, FECHA_ALTA]
             );
-
-            // If the insert fails (affectedRows === 0), you can handle it as needed
-            if (result.affectedRows === 0) {
-                return res.status(400).json({ message: 'Failed to insert row' });
-            }
         }
 
         // Commit the transaction
         await pool.query('COMMIT');
-
-        res.json({ message: 'Excel data inserted successfully' });
+        res.json({ message: 'Datos importados correctamente.' });
     } catch (error) {
-        // If an error occurs, rollback the transaction to avoid partial inserts
+        // Rollback en caso de error
         await pool.query('ROLLBACK');
-        res.status(500).json({ message: 'Error inserting Excel data', error });
+        res.status(500).json({ message: 'Error al importar datos.', error });
     }
 };
 
+export const addItem = async (req, res) => {
+    const {
+        codigoPatrimonial,
+        descripcion,
+        trabajador,
+        dependencia,
+        ubicacion,
+        FECHA_COMPRA,
+        FECHA_ALTA,
+        disposicion,
+        situacion
+    } = req.body;
 
-// SELECT * FROM item WHERE TRABAJADOR LIKE '%ESTRADA CHILE%' AND ESTADO = 0;
+    try {
+        // Verificar si el código patrimonial ya existe
+        const [existingRows] = await pool.query(
+            'SELECT 1 FROM item WHERE CODIGO_PATRIMONIAL = ?',
+            [codigoPatrimonial]
+        );
+
+        if (existingRows.length > 0) {
+            return res.status(400).json({
+                message: `El código patrimonial ${codigoPatrimonial} ya existe en la base de datos.`,
+            });
+        }
+
+        // Insertar nuevo bien patrimonial
+        await pool.query(
+            `INSERT INTO item (
+                CODIGO_PATRIMONIAL,
+                DESCRIPCION,
+                TRABAJADOR,
+                DEPENDENCIA,
+                UBICACION,
+                FECHA_COMPRA,
+                FECHA_ALTA,
+                DISPOSICION,
+                SITUACION
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                codigoPatrimonial,
+                descripcion,
+                trabajador,
+                dependencia,
+                ubicacion,
+                FECHA_COMPRA || null,
+                FECHA_ALTA || null,
+                disposicion,
+                situacion
+            ]
+        );
+
+        res.json({
+            message: 'Bien patrimonial agregado correctamente.',
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Error al agregar el bien patrimonial.',
+            error,
+        });
+    }
+};

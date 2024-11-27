@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
@@ -21,7 +20,6 @@ const GeneralSearchComp = () => {
         if (debounceTimeout.current) {
             clearTimeout(debounceTimeout.current);
         }
-
         // Setear el debounce
         debounceTimeout.current = setTimeout(() => {
             if (searchTerm !== '') {  // Si hay algún valor en el input
@@ -60,7 +58,6 @@ const GeneralSearchComp = () => {
                 onChange={handleInputChange}
                 className="form-control mb-4 fw-bold"
             />
-
             {/* Muestra un spinner de carga cuando se está realizando la búsqueda */}
             {isLoading ? (
                 <div className="text-center">
@@ -108,7 +105,7 @@ const GeneralSearchComp = () => {
                                         )}
                                     </td>
                                     <td>
-                                        {item.DISPOSICION === 0 ? (
+                                        {item.SITUACION === 0 ? (
                                             <span style={{ color: 'red', fontWeight: 'bold' }}>Faltante</span>
                                         ) : (
                                             <span style={{ color: 'green', fontWeight: 'bold' }}>Verificado</span>

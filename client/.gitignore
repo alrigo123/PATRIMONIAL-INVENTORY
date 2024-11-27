@@ -2,6 +2,7 @@
 /test
 /.pnp
 .pnp.js
+.env
 
 /src/test
 

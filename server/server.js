@@ -1,25 +1,24 @@
 import express from 'express';
 import cors from 'cors';
+import { config } from 'dotenv';
 import helmet from 'helmet';
 // npm install helmet --> Protege tu aplicación Express.js de vulnerabilidades comunes
 import rateLimit from 'express-rate-limit';
 // npm install express-rate-limit --> Esto evita ataques de denegación de servicio (DoS).
-import { config } from 'dotenv';
 
 // Cargar las variables del archivo .env
 config();
-
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutos
     max: 100, // Límite de 100 peticiones por IP
     message: 'Demasiadas solicitudes desde esta IP, por favor inténtalo de nuevo más tarde.'
 });
-
+  
 const app = express();
 
 //Middleware
-// Configuración CORS para permitir accesos desde cualquier origen (o especificar la IP del cliente)
+// Configuración CORS para permitir accesos desde cualquier origen
 app.use(cors({ origin: '*' }));
 app.use(express.json()) //process data to send to the backend
 app.use(helmet());
@@ -46,6 +45,6 @@ app.use('/export', export_reports)
 
 const puerto = process.env.SERVER_PORT;
 
-    app.listen(puerto, () => {
-        console.log(`listening on http://localhost:${puerto}`);
-    }); 
+app.listen(puerto, () => {
+    console.log(`listening on http://localhost:${puerto}`);
+}); 

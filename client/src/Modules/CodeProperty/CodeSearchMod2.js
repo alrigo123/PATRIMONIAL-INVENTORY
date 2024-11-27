@@ -200,8 +200,6 @@ const CodeSearchMod2 = () => {
                       </div>
                     )}
                   </td>
-
-
                 </tr>
               ))}
             </tbody>

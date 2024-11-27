@@ -13,7 +13,6 @@ function downloadTemplate() {
             'SEDE ACOMAYO', 'OFICINA ADMINISTRACION', '11/03/2011 00:00:00', 
             '11/03/2011 00:00:00'],
     ];
-
     
     const worksheet = XLSX.utils.aoa_to_sheet(worksheetData); // Crear hoja a partir del array
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Plantilla'); // Nombre que se le dará a la hoja dentro del libro.

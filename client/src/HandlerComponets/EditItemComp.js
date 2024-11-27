@@ -28,7 +28,6 @@ const EditItemComp = () => {
     // Para navegar a otra página después del submit
     const navigate = useNavigate();
 
-
     // Cargar datos al montar el componente
     useEffect(() => {
         const fetchData = async () => {
@@ -73,7 +72,6 @@ const EditItemComp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Evita que la página se recargue -- Prevenir el comportamiento por defecto del formulario
-
         try {
             // Convertir fechas al formato STRING antes de enviar (simulación de envío)
             const payload = {
@@ -95,7 +93,6 @@ const EditItemComp = () => {
                     // Después de que el usuario haga clic en "Aceptar", redirigir a otra página
                     navigate('/codigo-patrimonial');
                 });
-
             } else {
                 // alert('Error de API');
                 Swal.fire({
@@ -130,8 +127,6 @@ const EditItemComp = () => {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
-    
-
     return (
         <div className="container mt-5">
             <div className="card shadow-sm">
@@ -139,7 +134,7 @@ const EditItemComp = () => {
                     <h3 className="mb-0">Editar Información de <strong>"{formData.DESCRIPCION}"</strong></h3>
                 </div>
                 <div className="card-body">
-                    <form method="PUT" onSubmit={handleSubmit}>
+                    <form method="post" onSubmit={handleSubmit}>
                         <div className="row">
                             <div className="col-md-6 mb-3">
                                 <label className="form-label">Código Patrimonial</label>
@@ -159,6 +154,7 @@ const EditItemComp = () => {
                                     name="DESCRIPCION"
                                     value={formData.DESCRIPCION}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -172,6 +168,7 @@ const EditItemComp = () => {
                                     name="TRABAJADOR"
                                     value={formData.TRABAJADOR}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
@@ -182,6 +179,7 @@ const EditItemComp = () => {
                                     name="DEPENDENCIA"
                                     value={formData.DEPENDENCIA}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -195,6 +193,7 @@ const EditItemComp = () => {
                                     name="UBICACION"
                                     value={formData.UBICACION}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
@@ -233,7 +232,7 @@ const EditItemComp = () => {
                             </div>
                         </div>
 
-                        <div className="row">
+                        <div className="row mt-3">
                             <div className="mb-3 text-center">
                                 <label htmlFor="estadoSwitch" className="form-label me-2 fw-bold">Estado:</label>
                                 <div className="form-check form-switch d-inline-flex align-items-center">
@@ -301,7 +300,6 @@ const EditItemComp = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div className="text-center mt-4">
                             <button type="submit" className="btn btn-success me-3">
                                 Guardar Cambios
@@ -314,8 +312,6 @@ const EditItemComp = () => {
                 </div>
             </div>
         </div>
-
-
     );
 };
 
