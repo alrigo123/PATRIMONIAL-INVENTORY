@@ -18,8 +18,41 @@ const GridImportedComp = () => {
   const [fileLoaded, setFileLoaded] = useState(false); // Estado para controlar el mensaje
   const [loading, setLoading] = useState(false); // Estado para controlar la visibilidad de la barra y mensaje
 
-
   const expectedColumns = ['CODIGO_PATRIMONIAL', 'DESCRIPCION', 'TRABAJADOR', 'DEPENDENCIA', 'UBICACION', 'FECHA_COMPRA', 'FECHA_ALTA'];
+
+  const validatePatrimonialCodes = (sheetData) => {
+    const headers = sheetData[0]; // Primera fila como encabezados
+    const patrimonialIndex = headers.indexOf('CODIGO_PATRIMONIAL');
+
+    if (patrimonialIndex === -1) return true; // No hay columna, pasa la validación.
+
+    const invalidRows = sheetData.slice(1).filter((row) => {
+      const value = row[patrimonialIndex];
+      return (
+        !/^\d{1,12}$/.test(value) // Solo números y máximo 12 dígitos
+      );
+    });
+
+    if (invalidRows.length > 0) {
+      setErrorMessage(`
+        La columna <strong>CODIGO_PATRIMONIAL</strong> contiene errores:
+        <ul>
+          ${invalidRows
+          .map(
+            (row, idx) =>
+              `<li>Fila ${idx + 2}: Código inválido (<strong>${row[patrimonialIndex] || 'vacío'
+              }</strong>)</li>`
+          )
+          .join('')}
+        </ul>
+        Asegúrate de que los códigos sean numéricos y tengan máximo 12 dígitos.
+      `);
+      setShowModalButton(true);
+      return false;
+    }
+
+    return true;
+  };
 
   const handleFileUpload = (e) => {
     setProgress(10); // Progreso inicial
@@ -54,10 +87,10 @@ const GridImportedComp = () => {
         const sheet = workbook.Sheets[sheetName];
         const sheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        // Validar columnas de la hoja
-        if (!validateColumns(sheetData)) {
+        // Validar columnas y códigos patrimoniales
+        if (!validateColumns(sheetData) || !validatePatrimonialCodes(sheetData)) {
           isValid = false;
-          return; // Detener procesamiento de esta hoja
+          return;
         }
 
         sheets[sheetName] = sheetData;
@@ -107,19 +140,96 @@ const GridImportedComp = () => {
     return true;
   };
 
+  // Validar durante edición directa en la grilla
+  // const updateCellValue = (sheetName, rowIndex, colIndex, newValue) => {
+  //   setSheetsData((prevData) => {
+  //     const updatedData = { ...prevData }; // Crear una copia del estado actual
+  //     const sheet = updatedData[sheetName].map((row, rIndex) => {
+  //       if (rIndex === rowIndex) {
+  //         // Si estamos en la fila objetivo
+  //         return row.map((cell, cIndex) => {
+  //           const columnName = updatedData[sheetName][0][cIndex]; // Nombre de la columna
+
+  //           if (
+  //             columnName === 'CODIGO_PATRIMONIAL' && // Validar si es la columna correcta
+  //             !/^\d{1,12}$/.test(newValue) // Validar que cumpla con los requisitos
+  //           ) {
+  //             Swal.fire({
+  //               title: 'Código inválido',
+  //               text: 'El código debe contener solo números y tener máximo 12 dígitos.',
+  //               icon: 'warning',
+  //               confirmButtonText: 'Aceptar',
+  //             });
+  //             return cell; // Devolver el valor actual si no es válido
+  //           }
+
+  //           // Validar FECHA_COMPRA y FECHA_ALTA
+  //          if (
+  //             (columnName === 'FECHA_COMPRA' || columnName === 'FECHA_ALTA') &&
+  //             !/^\d{4}[-/]\d{2}[-/]\d{2}$/.test(newValue) // Validar formato similar a fecha
+  //           ) {
+  //             Swal.fire({
+  //               title: 'Fecha inválida',
+  //               text: 'La fecha debe tener un formato similar a YYYY-MM-DD o DD/MM/YYYY.',
+  //               icon: 'warning',
+  //               confirmButtonText: 'Aceptar',
+  //             });
+  //             return cell; // No actualizar si es inválido
+  //           }
+  //           return cIndex === colIndex ? newValue : cell; // Actualizar solo la celda específica
+  //         });
+  //       }
+  //       return row; // Devolver la fila intacta si no coincide
+  //     });
+  //     updatedData[sheetName] = sheet; // Actualizar la hoja específica
+  //     return updatedData; // Devolver los datos actualizados
+  //   });
+  // };
+
+  // Validar durante edición directa en la grilla
   const updateCellValue = (sheetName, rowIndex, colIndex, newValue) => {
     setSheetsData((prevData) => {
-      const updatedData = { ...prevData };
-      const sheet = updatedData[sheetName].map((row, rIndex) =>
-        rIndex === rowIndex
-          ? row.map((cell, cIndex) => (cIndex === colIndex ? newValue : cell))
-          : row
-      );
-      updatedData[sheetName] = sheet;
-      return updatedData;
+      const updatedData = { ...prevData }; // Crear una copia del estado actual
+      const sheet = updatedData[sheetName].map((row, rIndex) => {
+        if (rIndex === rowIndex) {
+          return row.map((cell, cIndex) => {
+            const columnName = updatedData[sheetName][0][cIndex]; // Nombre de la columna
+
+            // Validar CODIGO_PATRIMONIAL
+            if (columnName === 'CODIGO_PATRIMONIAL' && !/^\d{1,12}$/.test(newValue)) {
+              Swal.fire({
+                title: 'Código inválido',
+                text: 'El código debe contener solo números y tener máximo 12 dígitos.',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar',
+              });
+              return cell; // No actualizar si es inválido
+            }
+
+            // Validar FECHA_COMPRA y FECHA_ALTA con formato más estricto
+            if (
+              (columnName === 'FECHA_COMPRA' || columnName === 'FECHA_ALTA') &&
+              !/^(?:\d{4}[-/]\d{2}[-/]\d{2}|\d{2}[-/]\d{2}[-/]\d{4})$/.test(newValue) // Formatos permitidos: YYYY-MM-DD o DD/MM/YYYY
+            ) {
+              Swal.fire({
+                title: 'Fecha inválida',
+                text: 'La fecha debe tener un formato similar a YYYY-MM-DD o DD/MM/YYYY.',
+                icon: 'warning',
+                confirmButtonText: 'Aceptar',
+              });
+              return cell; // No actualizar si es inválido
+            }
+
+            return cIndex === colIndex ? newValue : cell; // Actualizar solo la celda específica
+          });
+        }
+        return row; // Devolver la fila intacta si no coincide
+      });
+      updatedData[sheetName] = sheet; // Actualizar la hoja específica
+      return updatedData; // Devolver los datos actualizados
     });
   };
-
+  
   // Valida si hay celdas vacías en los datos
   const validateEmptyCells = (data) => {
     const invalidRows = data.filter((row) =>
