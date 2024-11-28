@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3030/items'
+const API_URL = process.env.REACT_APP_API_URL_ITEMS
 
 export const APIgetItemById = async (id) => {
     try {

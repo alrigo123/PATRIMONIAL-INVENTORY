@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-const URL = 'http://localhost:3030/items'
+const URL = process.env.REACT_APP_API_URL_ITEMS
 
 const WorkerSearchMod2 = () => {
     const [searchTerm2, setSearchTerm2] = useState(''); // Valor del segundo buscador
@@ -56,7 +56,7 @@ const WorkerSearchMod2 = () => {
                 onChange={handleInputChange2}
                 className="form-control mb-4 fw-bold"
                 style={{ marginBottom: '20px', padding: '10px' }}
-            />  
+            />
 
             {/* Muestra un spinner de carga cuando se está realizando la búsqueda */}
             {isLoading ? (

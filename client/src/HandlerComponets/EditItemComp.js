@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'; // Importa SweetAlert2
 import axios from 'axios';
 import { APIgetItemById } from "../services/item.service";
 import { formatToDateInput, formatToDatabase, parseDate } from "../utils/datesUtils";
-const API_URL = 'http://localhost:3030/items';
+const API_URL = process.env.REACT_APP_API_URL_ITEMS;
 
 const EditItemComp = () => {
     // Estados para los inputs editables

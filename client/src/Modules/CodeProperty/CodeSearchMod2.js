@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-const URL = 'http://localhost:3030/items'
+const URL = process.env.REACT_APP_API_URL_ITEMS
 
 const CodeSearchMod2 = () => {
   const [stateCode, setStateCode] = useState('');

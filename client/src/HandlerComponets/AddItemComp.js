@@ -4,6 +4,8 @@ import axios from "axios";
 import { formatToDatabase } from "../utils/datesUtils";
 import Swal from "sweetalert2"; // Importa SweetAlert2
 
+const URI_ITEMS = process.env.REACT_APP_API_URL_ITEMS
+
 const AddItemComp = () => {
     // Para navegar a otra página después del submit
     const navigate = useNavigate();
@@ -41,7 +43,7 @@ const AddItemComp = () => {
 
         try {
             const response = await axios.post(
-                "http://localhost:3030/items/add",
+                `${URI_ITEMS}/add`,
                 {
                     ...formData,
                     DISPOSICION: formData.disposicion ? 1 : 0, // Convertir booleano a 1/0

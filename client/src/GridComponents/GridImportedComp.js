@@ -9,6 +9,8 @@ import ModalComp from './ModalComp';
 import ErrorModalComp from './ErrorModalComp';
 import TemplateExcelComp from './TemplateExcelComp';
 
+const URI_ITEMS = process.env.REACT_APP_API_URL_ITEMS
+
 const GridImportedComp = () => {
   const [sheetsData, setSheetsData] = useState({});
   const [currentSheet, setCurrentSheet] = useState('');
@@ -272,7 +274,7 @@ const GridImportedComp = () => {
       // console.log("DATA RESPONSE:", allData)
       // throw Error
       // Enviando los datos al backend via Axios
-      const response = await axios.post('http://localhost:3030/items/imported', { data: allData });
+      const response = await axios.post(`${URI_ITEMS}/imported`, { data: allData });
 
 
       // Handling response from the backend

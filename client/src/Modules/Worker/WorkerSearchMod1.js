@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-const URL = 'http://localhost:3030/items'
+const URL = process.env.REACT_APP_API_URL_ITEMS
 
 const WorkerSearchMod1 = () => {
     const [searchTerm1, setSearchTerm1] = useState(''); // Valor del primer buscador

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-const URI = 'http://localhost:3030/items';
+const URI = process.env.REACT_APP_API_URL_ITEMS;
 
 const GeneralSearchComp = () => {
     const [searchTerm, setSearchTerm] = useState(''); // Guarda el valor ingresado en el input
