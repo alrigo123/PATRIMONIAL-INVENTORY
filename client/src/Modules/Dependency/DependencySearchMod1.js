@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
+const URL = process.env.REACT_APP_API_URL_ITEMS
+
 const DependencySearchMod1 = () => {
     const [searchTerm1, setSearchTerm1] = useState(''); // Valor del primer buscador
     const [results1, setResults1] = useState([]); // Resultados de la primera búsqueda
@@ -21,7 +23,7 @@ const DependencySearchMod1 = () => {
                 const fetchItems1 = async () => {
                     setIsLoading(true);
                     try {
-                        const response = await axios.get(`http://localhost:3030/items/dependency?q=${searchTerm1}`);
+                        const response = await axios.get(`${URL}/dependency?q=${searchTerm1}`);
                         setResults1(response.data);
                     } catch (error) {
                         console.log('Error al obtener los items:', error);

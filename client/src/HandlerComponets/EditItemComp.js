@@ -4,9 +4,13 @@ import Swal from 'sweetalert2'; // Importa SweetAlert2
 import axios from 'axios';
 import { APIgetItemById } from "../services/item.service";
 import { formatToDateInput, formatToDatabase, parseDate } from "../utils/datesUtils";
-const API_URL = 'http://localhost:3030/items';
+const API_URL = process.env.REACT_APP_API_URL_ITEMS;
 
 const EditItemComp = () => {
+
+    const [conservacion, setConservacion] = useState([]);
+    const [loadingConservacion, setLoadingConservacion] = useState(true);
+
     // Estados para los inputs editables
     const [formData, setFormData] = useState({
         CODIGO_PATRIMONIAL: '',
@@ -18,7 +22,8 @@ const EditItemComp = () => {
         FECHA_COMPRA: '',
         ESTADO: '',
         DISPOSICION: '',
-        SITUACION: ''
+        SITUACION: '',
+        CONSERV: ''
     });
 
     const { id } = useParams();
@@ -28,6 +33,21 @@ const EditItemComp = () => {
     // Para navegar a otra página después del submit
     const navigate = useNavigate();
 
+    // Cargar conservacion al montar el componente
+    useEffect(() => {
+        const fetchConservacion = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/conservation`);
+                setConservacion(response.data); // Suponiendo que la respuesta es un array con las opciones
+                setLoadingConservacion(false);
+            } catch (err) {
+                setLoadingConservacion(false);
+                console.error("Error al cargar las calificaciones:", err);
+            }
+        };
+
+        fetchConservacion();
+    }, []);
 
     // Cargar datos al montar el componente
     useEffect(() => {
@@ -45,7 +65,8 @@ const EditItemComp = () => {
                     FECHA_COMPRA: data.FECHA_COMPRA || '',
                     ESTADO: data.ESTADO,
                     DISPOSICION: data.DISPOSICION,
-                    SITUACION: data.SITUACION
+                    SITUACION: data.SITUACION,
+                    CONSERV: data.CONSERV || ''
                 });
                 setLoading(false);
             } catch (err) {
@@ -73,7 +94,6 @@ const EditItemComp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Evita que la página se recargue -- Prevenir el comportamiento por defecto del formulario
-
         try {
             // Convertir fechas al formato STRING antes de enviar (simulación de envío)
             const payload = {
@@ -82,7 +102,7 @@ const EditItemComp = () => {
                 FECHA_ALTA: formData.FECHA_ALTA ? formData.FECHA_ALTA.toString() : 'Sin Registro',
             };
             console.log("Datos enviados a la base de datos:", payload);
-
+            // throw Error
             const response = await axios.put(`${API_URL}/edit/${payload.CODIGO_PATRIMONIAL}`, payload);
 
             if (response.status === 200) {
@@ -95,7 +115,6 @@ const EditItemComp = () => {
                     // Después de que el usuario haga clic en "Aceptar", redirigir a otra página
                     navigate('/codigo-patrimonial');
                 });
-
             } else {
                 // alert('Error de API');
                 Swal.fire({
@@ -130,8 +149,6 @@ const EditItemComp = () => {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
-    
-
     return (
         <div className="container mt-5">
             <div className="card shadow-sm">
@@ -139,7 +156,7 @@ const EditItemComp = () => {
                     <h3 className="mb-0">Editar Información de <strong>"{formData.DESCRIPCION}"</strong></h3>
                 </div>
                 <div className="card-body">
-                    <form method="PUT" onSubmit={handleSubmit}>
+                    <form method="post" onSubmit={handleSubmit}>
                         <div className="row">
                             <div className="col-md-6 mb-3">
                                 <label className="form-label">Código Patrimonial</label>
@@ -159,6 +176,7 @@ const EditItemComp = () => {
                                     name="DESCRIPCION"
                                     value={formData.DESCRIPCION}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -172,6 +190,7 @@ const EditItemComp = () => {
                                     name="TRABAJADOR"
                                     value={formData.TRABAJADOR}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
@@ -182,6 +201,7 @@ const EditItemComp = () => {
                                     name="DEPENDENCIA"
                                     value={formData.DEPENDENCIA}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -195,6 +215,7 @@ const EditItemComp = () => {
                                     name="UBICACION"
                                     value={formData.UBICACION}
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
@@ -233,7 +254,29 @@ const EditItemComp = () => {
                             </div>
                         </div>
 
-                        <div className="row">
+                        <div className="col-md-6 mb-3">
+                            <label className="form-label">Estado de Conservación</label>
+                            <select
+                                className="form-control"
+                                name="CONSERV"
+                                value={formData.CONSERV || ''} // Asume que CALIFICACION puede ser null, por eso asignamos una cadena vacía si es null
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="">Seleccionar</option>
+                                {loadingConservacion ? (
+                                    <option value="">Cargando...</option>
+                                ) : (
+                                    conservacion.map(cal => (
+                                        <option key={cal.id} value={cal.id}>
+                                            {cal.CONSERV} {/* Suponiendo que cada objeto tiene `id` y `nombre` */}
+                                        </option>
+                                    ))
+                                )}
+                            </select>
+                        </div>
+
+                        <div className="row mt-3">
                             <div className="mb-3 text-center">
                                 <label htmlFor="estadoSwitch" className="form-label me-2 fw-bold">Estado:</label>
                                 <div className="form-check form-switch d-inline-flex align-items-center">
@@ -301,7 +344,6 @@ const EditItemComp = () => {
                                 </div>
                             </div>
                         </div>
-
                         <div className="text-center mt-4">
                             <button type="submit" className="btn btn-success me-3">
                                 Guardar Cambios
@@ -314,8 +356,6 @@ const EditItemComp = () => {
                 </div>
             </div>
         </div>
-
-
     );
 };
 

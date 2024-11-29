@@ -3,7 +3,7 @@ import * as XLSX from "xlsx";
 
 const API_export = process.env.REACT_APP_API_URL_EXPORT;
 
-const ExportReportsDispoMod = () => {
+const ExportReportsMod = () => {
   const fechaFormateada = new Date().toISOString().split("T")[0];
 
   // Función genérica para consultar API
@@ -36,8 +36,22 @@ const ExportReportsDispoMod = () => {
 
   // Función para mapear estado
   const mapEstado = (estado) => {
+    if (estado === 1) return "Patrimonizado";
+    if (estado === 0) return "No Patrimonizado";
+    return "Desconocido";
+  };
+
+  // Función para mapear estado
+  const mapSituacion = (estado) => {
     if (estado === 1) return "Funcional";
     if (estado === 0) return "No Funcional";
+    return "Desconocido";
+  };
+
+  // Función para mapear estado
+  const mapDisposicion = (estado) => {
+    if (estado === 1) return "Verificado";
+    if (estado === 0) return "Faltante";
     return "Desconocido";
   };
 
@@ -52,31 +66,15 @@ const ExportReportsDispoMod = () => {
   // Configuración de consultas
   const queriesConfig = [
     {
-      name: "REPORTE FUNCIONALES",
-      url: `${API_export}/disposition/true`,
+      name: "REPORTE CONSOLIDADO GENERAL",
+      url: `${API_export}/general`,
       formatCallbacks: {
         FECHA_REGISTRO: formatDate,
-        DISPOSICION: mapEstado,
+        ESTADO: mapEstado,
+        DISPOSICION: mapDisposicion,
+        SITUACION: mapSituacion
       },
-      fileName: "reporte-funcionales",
-    },
-    {
-      name: "REPORTE NO FUNCIONALES",
-      url: `${API_export}/disposition/false`,
-      formatCallbacks: {
-        FECHA_REGISTRO: formatDate,
-        DISPOSICION: mapEstado,
-      },
-      fileName: "reporte-no-funcionales",
-    },
-    {
-      name: "REPORTE CONSOLIDADO POR DISPOSICIÓN",
-      url: `${API_export}/disposition`,
-      formatCallbacks: {
-        FECHA_REGISTRO: formatDate,
-        DISPOSICION: mapEstado,
-      },
-      fileName: "reporte-disposicion-consolidado",
+      fileName: "reporte-consolidado-general",
     },
   ];
 
@@ -94,11 +92,11 @@ const ExportReportsDispoMod = () => {
 
   // Renderizado de botones
   return (
-    <div className="row mt-2 mb-2">
+    <div className="row mt-2 mb-2 justify-content-center">
       {queriesConfig.map((config, index) => (
-        <div className="col-4" key={index}>
+        <div className="col-4 d-flex justify-content-center" key={index}>
           <button
-            className="btn btn-success btn-sm fw-bolder w-100 py-2"
+            className="btn btn-success btn-sm fw-bolder w-100 p-3"
             onClick={() => handleExport(config)}
           >
             {config.name}
@@ -106,7 +104,8 @@ const ExportReportsDispoMod = () => {
         </div>
       ))}
     </div>
+
   );
 };
 
-export default ExportReportsDispoMod;
+export default ExportReportsMod;

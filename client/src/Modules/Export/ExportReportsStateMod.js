@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as XLSX from "xlsx";
 
-const API_export = 'http://localhost:3030/export';
+const API_export = process.env.REACT_APP_API_URL_EXPORT;
 
 const ExportReportsStateMod = () => {
   const fechaFormateada = new Date().toISOString().split("T")[0];
@@ -70,7 +70,7 @@ const ExportReportsStateMod = () => {
       fileName: "reporte-no-patrimonizado",
     },
     {
-      name: "REPORTE CONSOLIDADO PATRIMONIZADO",
+      name: "REPORTE CONSOLIDADO ESTADO",
       url: `${API_export}/state`,
       formatCallbacks: {
         FECHA_REGISTRO: formatDate,

@@ -3,7 +3,7 @@ import * as XLSX from "xlsx";
 
 const API_export = process.env.REACT_APP_API_URL_EXPORT;
 
-const ExportReportsDispoMod = () => {
+const ExportReportsSituaMod = () => {
   const fechaFormateada = new Date().toISOString().split("T")[0];
 
   // Función genérica para consultar API
@@ -36,8 +36,8 @@ const ExportReportsDispoMod = () => {
 
   // Función para mapear estado
   const mapEstado = (estado) => {
-    if (estado === 1) return "Funcional";
-    if (estado === 0) return "No Funcional";
+    if (estado === 1) return "Verificado";
+    if (estado === 0) return "Faltante";
     return "Desconocido";
   };
 
@@ -52,31 +52,31 @@ const ExportReportsDispoMod = () => {
   // Configuración de consultas
   const queriesConfig = [
     {
-      name: "REPORTE FUNCIONALES",
-      url: `${API_export}/disposition/true`,
+      name: "REPORTE VERIFICADOS",
+      url: `${API_export}/situation/true`,
       formatCallbacks: {
         FECHA_REGISTRO: formatDate,
-        DISPOSICION: mapEstado,
+        SITUACION: mapEstado,
       },
-      fileName: "reporte-funcionales",
+      fileName: "reporte-verificados",
     },
     {
-      name: "REPORTE NO FUNCIONALES",
-      url: `${API_export}/disposition/false`,
+      name: "REPORTE FALTANTES",
+      url: `${API_export}/situation/false`,
       formatCallbacks: {
         FECHA_REGISTRO: formatDate,
-        DISPOSICION: mapEstado,
+        SITUACION: mapEstado,
       },
-      fileName: "reporte-no-funcionales",
+      fileName: "reporte-faltantes",
     },
     {
-      name: "REPORTE CONSOLIDADO POR DISPOSICIÓN",
-      url: `${API_export}/disposition`,
+      name: "REPORTE CONSOLIDADO SITUACIÓN",
+      url: `${API_export}/situation`,
       formatCallbacks: {
         FECHA_REGISTRO: formatDate,
-        DISPOSICION: mapEstado,
+        SITUACION: mapEstado,
       },
-      fileName: "reporte-disposicion-consolidado",
+      fileName: "reporte-situacion-consolidado",
     },
   ];
 
@@ -109,4 +109,4 @@ const ExportReportsDispoMod = () => {
   );
 };
 
-export default ExportReportsDispoMod;
+export default ExportReportsSituaMod;

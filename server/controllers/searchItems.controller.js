@@ -3,7 +3,6 @@ import pool from '../db.js';
 export const searchGeneral = async (req, res, next) => {
     try {
         const searchTerm = req.query.q; // El término de búsqueda que el usuario ingresa
-
         /* 
         ##FULL TEXT PARA OPTIMIZAR LA BUSQUEDA SIN ORDEN 
         ##CREAR UN INDEX EN LA BD Y LUEGO LA CONSULTA LO MATCHEA
@@ -11,7 +10,6 @@ export const searchGeneral = async (req, res, next) => {
        "SHOW INDEX FROM item;" ## PARA VER LOS FULLTEXT
         "CREATE FULLTEXT INDEX idx_trabajador_desc ON item(TRABAJADOR, DESCRIPCION, DEPENDENCIA);"
         */
-
         const [rows] = await pool.query(
             `SELECT * FROM item 
              WHERE MATCH(DESCRIPCION, TRABAJADOR, DEPENDENCIA) 
@@ -75,8 +73,8 @@ export const searchItemsByWorkerAndDescription = async (req, res, next) => {
 
         // Validamos si hay resultados
         if (!rows.length) return res.status(404).json({ message: 'No se encontraron ítems con los criterios especificados' });
-
         res.json(rows); // Enviamos los resultados
+        
     } catch (error) {
         console.error("Error en la consulta:", error);
         return res.status(500).json({ message: "Error en el servidor" });

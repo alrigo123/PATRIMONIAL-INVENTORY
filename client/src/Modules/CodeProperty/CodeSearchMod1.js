@@ -1,10 +1,8 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-
 import { parseDate } from '../../utils/datesUtils';
 
-
-const URL = 'http://localhost:3030/items'
+const URL = process.env.REACT_APP_API_URL_ITEMS
 
 const CodeSearchMod1 = () => {
   const [barcode, setBarcode] = useState('');
@@ -108,7 +106,6 @@ const CodeSearchMod1 = () => {
       ) : (
         barcode && <p className="text-center text-danger">No se encontró ningún bien con el CODIGO PATRIMONIAL ingresado.</p>
       )}
-
     </div>
   )
 }

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-const URL = 'http://localhost:3030/items'
+const URL = process.env.REACT_APP_API_URL_ITEMS
 
 const CodeSearchMod2 = () => {
   const [stateCode, setStateCode] = useState('');
@@ -23,7 +23,7 @@ const CodeSearchMod2 = () => {
 
   const fetchState = async (code) => {
     try {
-      const response = await axios.get(`${URL}/status/${code}`);
+      const response = await axios.get(`${URL}/conservation/${code}`);
       setStateData([response.data] || []);
     } catch (error) {
       console.log('Error al obtener el estado:', error);
@@ -122,6 +122,7 @@ const CodeSearchMod2 = () => {
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Descripción</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Trabajador</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Dependencia</th>
+                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Conservacion</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Ultima Fecha de Registro</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Fecha de Alta</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Estado</th>
@@ -137,6 +138,7 @@ const CodeSearchMod2 = () => {
                   <td>{item.DESCRIPCION}</td>
                   <td>{item.TRABAJADOR}</td>
                   <td>{item.DEPENDENCIA}</td>
+                  <td>{item.EST_CONSERVACION}</td>
                   <td>{item.FECHA_REGISTRO ? new Date(item.FECHA_REGISTRO).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''}</td>
                   <td>{item.FECHA_ALTA ? item.FECHA_ALTA : 'No Registra'}</td>
                   <td>
@@ -200,8 +202,6 @@ const CodeSearchMod2 = () => {
                       </div>
                     )}
                   </td>
-
-
                 </tr>
               ))}
             </tbody>
