@@ -7,6 +7,10 @@ import { formatToDateInput, formatToDatabase, parseDate } from "../utils/datesUt
 const API_URL = process.env.REACT_APP_API_URL_ITEMS;
 
 const EditItemComp = () => {
+
+    const [conservacion, setConservacion] = useState([]);
+    const [loadingConservacion, setLoadingConservacion] = useState(true);
+
     // Estados para los inputs editables
     const [formData, setFormData] = useState({
         CODIGO_PATRIMONIAL: '',
@@ -18,7 +22,8 @@ const EditItemComp = () => {
         FECHA_COMPRA: '',
         ESTADO: '',
         DISPOSICION: '',
-        SITUACION: ''
+        SITUACION: '',
+        CONSERV: ''
     });
 
     const { id } = useParams();
@@ -27,6 +32,22 @@ const EditItemComp = () => {
 
     // Para navegar a otra página después del submit
     const navigate = useNavigate();
+
+    // Cargar conservacion al montar el componente
+    useEffect(() => {
+        const fetchConservacion = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/conservation`);
+                setConservacion(response.data); // Suponiendo que la respuesta es un array con las opciones
+                setLoadingConservacion(false);
+            } catch (err) {
+                setLoadingConservacion(false);
+                console.error("Error al cargar las calificaciones:", err);
+            }
+        };
+
+        fetchConservacion();
+    }, []);
 
     // Cargar datos al montar el componente
     useEffect(() => {
@@ -44,7 +65,8 @@ const EditItemComp = () => {
                     FECHA_COMPRA: data.FECHA_COMPRA || '',
                     ESTADO: data.ESTADO,
                     DISPOSICION: data.DISPOSICION,
-                    SITUACION: data.SITUACION
+                    SITUACION: data.SITUACION,
+                    CONSERV: data.CONSERV || ''
                 });
                 setLoading(false);
             } catch (err) {
@@ -80,7 +102,7 @@ const EditItemComp = () => {
                 FECHA_ALTA: formData.FECHA_ALTA ? formData.FECHA_ALTA.toString() : 'Sin Registro',
             };
             console.log("Datos enviados a la base de datos:", payload);
-
+            // throw Error
             const response = await axios.put(`${API_URL}/edit/${payload.CODIGO_PATRIMONIAL}`, payload);
 
             if (response.status === 200) {
@@ -230,6 +252,28 @@ const EditItemComp = () => {
                                     onChange={handleInputChange}
                                 />
                             </div>
+                        </div>
+
+                        <div className="col-md-6 mb-3">
+                            <label className="form-label">Estado de Conservación</label>
+                            <select
+                                className="form-control"
+                                name="CONSERV"
+                                value={formData.CONSERV || ''} // Asume que CALIFICACION puede ser null, por eso asignamos una cadena vacía si es null
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="">Seleccionar</option>
+                                {loadingConservacion ? (
+                                    <option value="">Cargando...</option>
+                                ) : (
+                                    conservacion.map(cal => (
+                                        <option key={cal.id} value={cal.id}>
+                                            {cal.CONSERV} {/* Suponiendo que cada objeto tiene `id` y `nombre` */}
+                                        </option>
+                                    ))
+                                )}
+                            </select>
                         </div>
 
                         <div className="row mt-3">

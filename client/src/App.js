@@ -25,9 +25,10 @@ import Error404Comp from './NavigationComponents/Error404Comp.js';
 import EditItemComp from './HandlerComponets/EditItemComp.js';
 import AddItemComp from './HandlerComponets/AddItemComp.js';
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+//CHAT BOT
+import ChatBotComp from './ChatBotComp.js';
 
-import DataSearchComponent from './DataSearchComponent.js';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
@@ -45,12 +46,13 @@ function App() {
             <Route path="/dependencia" element={<DependencySearchComp />} />
             <Route path="/doble-busqueda" element={<DoubleSearchComp />} />
             <Route path="/import-excel" element={<GridImportedComp />} />
-            <Route path="/test" element={<DataSearchComponent />} />
             {/* Ruta para páginas no encontradas */}
             <Route path="*" element={<Error404Comp />} />
             {/* Handler Components */}
             <Route path="/edit/:id" element={<EditItemComp />} />
             <Route path="/add" element={<AddItemComp />} />
+            {/* AI INTEGRATION */}
+            <Route path="/chat" element={<ChatBotComp />} />
           </Routes>
         </main>
       </BrowserRouter>

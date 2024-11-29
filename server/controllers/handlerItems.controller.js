@@ -83,12 +83,73 @@ export const getItemByCodePatAndUpdate = async (req, res, next) => {
     }
 };
 
+// export const updateItem = async (req, res) => {
+//     const { id } = req.params;
+//     const { DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION,
+//         SITUACION } = req.body;
+//     try {
+//         // Consulta SQL para actualizar el item
+//         const [result] = await pool.query(
+//             `
+//             UPDATE item 
+//             SET 
+//                 DESCRIPCION = ?,
+//                 TRABAJADOR = ?, 
+//                 DEPENDENCIA = ?, 
+//                 UBICACION = ?, 
+//                 FECHA_ALTA = ?, 
+//                 FECHA_COMPRA = ?, 
+//                 DISPOSICION = ?, 
+//                 SITUACION = ?
+//             WHERE 
+//                 CODIGO_PATRIMONIAL = ?
+//             `,
+//             [
+//                 DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION,
+//                 FECHA_ALTA || null, FECHA_COMPRA || null,
+//                 DISPOSICION, SITUACION,
+//                 id
+//             ]
+//         );
+
+//         // Verificar si el ítem fue encontrado
+//         if (result.affectedRows === 0) {
+//             console.log("NO SE ENCONTRO EL ITEM")
+//             return res.status(404).json({ message: 'Item not found' });
+//         }
+
+//         res.json({ message: 'Item updated successfully' });
+//     } catch (error) {
+//         console.log("ERROR EN HANDLER: ", error)
+//         res.status(500).json({ message: 'Error updating item', error });
+//     }
+// };
+
+
 export const updateItem = async (req, res) => {
     const { id } = req.params;
-    const { DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION,
-        SITUACION } = req.body;
+    const { DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION, SITUACION, CONSERV } = req.body;
+
     try {
-        // Consulta SQL para actualizar el item
+        // Verificar si el ítem existe y está relacionado con la tabla 'conservacion'
+        const [item] = await pool.query(
+            `
+            SELECT I.CODIGO_PATRIMONIAL
+            FROM item AS I
+            INNER JOIN conservacion AS C
+            ON I.CONSERV = C.id
+            WHERE I.CODIGO_PATRIMONIAL = ?
+            `,
+            [id]
+        );
+
+        // Si no se encuentra el ítem, retornar un mensaje de error
+        if (item.length === 0) {
+            console.log("NO SE ENCONTRO EL ITEM O NO ESTA RELACIONADO CON CONSERVACION");
+            return res.status(404).json({ message: 'Item not found or not related to conservacion' });
+        }
+
+        // Consulta SQL para actualizar el item, incluyendo la actualización del campo CONSERV
         const [result] = await pool.query(
             `
             UPDATE item 
@@ -100,7 +161,8 @@ export const updateItem = async (req, res) => {
                 FECHA_ALTA = ?, 
                 FECHA_COMPRA = ?, 
                 DISPOSICION = ?, 
-                SITUACION = ?
+                SITUACION = ?,
+                CONSERV = ?
             WHERE 
                 CODIGO_PATRIMONIAL = ?
             `,
@@ -108,19 +170,20 @@ export const updateItem = async (req, res) => {
                 DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION,
                 FECHA_ALTA || null, FECHA_COMPRA || null,
                 DISPOSICION, SITUACION,
+                CONSERV || null,  // Aquí se actualiza CONSERV
                 id
             ]
         );
 
-        // Verificar si el ítem fue encontrado
+        // Verificar si el ítem fue encontrado y actualizado
         if (result.affectedRows === 0) {
-            console.log("NO SE ENCONTRO EL ITEM")
+            console.log("NO SE ENCONTRO EL ITEM");
             return res.status(404).json({ message: 'Item not found' });
         }
 
         res.json({ message: 'Item updated successfully' });
     } catch (error) {
-        console.log("ERROR EN HANDLER: ", error)
+        console.log("ERROR EN HANDLER: ", error);
         res.status(500).json({ message: 'Error updating item', error });
     }
 };
