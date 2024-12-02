@@ -20,9 +20,6 @@ const ShowItemsComp = () => {
     const [filterDisposicion, setFilterDisposicion] = useState('all');
     const [filterSituacion, setFilterSituacion] = useState('all');
 
-    console.log("api:", URI);
-    console.log("api_process:", process.env.REACT_APP_API_URL_ITEMS);
-
     // throw Error                                                                                                                    
 
     // Obtener todos los items de la API con paginación
@@ -34,7 +31,7 @@ const ShowItemsComp = () => {
             setItems(response.data.items);
             setTotal(response.data.total);
         } catch (error) {
-            console.error('Error fetching items:', error);
+            console.error('Error fetching items:', error.message);
         }
     };
 
@@ -83,7 +80,7 @@ const ShowItemsComp = () => {
                             </select>
                         </div>
                         <div className="mb-3 col-4 text-start">
-                        <h5 className='fw-semibold mt-2 '>Filtrar por Disposición</h5>
+                            <h5 className='fw-semibold mt-2 '>Filtrar por Disposición</h5>
                             <select
                                 id="filter2"
                                 className="form-select fw-bolder"
@@ -96,7 +93,7 @@ const ShowItemsComp = () => {
                             </select>
                         </div>
                         <div className="mb-3 col-4 text-start">
-                        <h5 className='fw-semibold mt-2 '>Filtrar por Situación</h5>
+                            <h5 className='fw-semibold mt-2 '>Filtrar por Situación</h5>
                             <select
                                 id="filter3"
                                 className="form-select fw-bolder"
@@ -109,6 +106,11 @@ const ShowItemsComp = () => {
                             </select>
                         </div>
                     </div>
+                    {/* Botones para exportar reportes */}
+                    <ExportReportsStateMod />
+                    <ExportReportsDispoMod />
+                    <ExportReportsSituaMod />
+                    <ExportReportsMod />
 
                     {/* Selector de límite */}
                     <div className="d-flex align-items-center mb-3 flex-wrap">
@@ -124,16 +126,13 @@ const ShowItemsComp = () => {
                             <option value={25}>25</option>
                             <option value={50}>50</option>
                             <option value={100}>100</option>
+                            <option value={200}>200</option>
+                            <option value={500}>500</option>
                         </select>
                         <span className="me-3">registros por página</span>
                     </div>
 
-                    {/* Botones para exportar reportes */}
-                    <ExportReportsStateMod />
-                    <ExportReportsDispoMod />
-                    <ExportReportsSituaMod />
-                    <ExportReportsMod />
-                    
+
                     {/* TABLA DE DATOS */}
                     <table className="w-auto table table-striped table-bordered align-middle mt-3">
                         <thead className="table-primary">
@@ -147,6 +146,7 @@ const ShowItemsComp = () => {
                                 <th>Fecha de Alta</th>
                                 <th>Estado</th>
                                 <th>Disposición</th>
+                                <th>Conservación</th>
                                 <th>Situación</th>
                             </tr>
                         </thead>
@@ -173,6 +173,21 @@ const ShowItemsComp = () => {
                                         ) : (
                                             <span style={{ color: 'green', fontWeight: 'bold' }}>Funcional</span>
                                         )}
+                                    </td>
+                                    <td
+                                        style={{
+                                            fontWeight: 'bold',
+                                            color:
+                                                item.EST_CONSERVACION === "Bueno"
+                                                    ? "blue"
+                                                    : item.EST_CONSERVACION === "Malo"
+                                                        ? "#790303"
+                                                        : item.EST_CONSERVACION === "Regular"
+                                                            ? "purple"
+                                                            : "black", // Color por defecto
+                                        }}
+                                    >
+                                        {item.EST_CONSERVACION}
                                     </td>
                                     <td>
                                         {item.SITUACION === 0 ? (

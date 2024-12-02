@@ -15,9 +15,8 @@ const limiter = rateLimit({
     max: 100, // Límite de 100 peticiones por IP
     message: 'Demasiadas solicitudes desde esta IP, por favor inténtalo de nuevo más tarde.'
 });
-
 const app = express();
-
+   
 //Middleware
 // Configuración CORS para permitir accesos desde cualquier origen
 app.use(cors({ origin: '*' }));
@@ -68,11 +67,13 @@ app.use((req, res, next) => {
 //Routes
 import routes from './routes/index.routes.js';
 import item_routes from './routes/item.routes.js';
+import user_routes from './routes/user.routes.js';
 import export_reports from './routes/export.routes.js'
 
 //app
 app.use(routes)
 app.use('/items', item_routes)
+app.use('/user', user_routes)
 app.use('/export', export_reports)
 
 const puerto = process.env.SERVER_PORT;

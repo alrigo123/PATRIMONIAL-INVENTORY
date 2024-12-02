@@ -13,7 +13,6 @@ import {
   getAllItemsToExport
 } from "../controllers/exportReports.controller.js";
 
-
 const router = Router();
 
 //EXPORT DATA TO EXCEL

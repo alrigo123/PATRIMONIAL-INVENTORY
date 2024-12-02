@@ -29,6 +29,9 @@ const NavBarComp = () => {
             <a className="menu-item" href="/import-excel">
                 📚 Importar Datos
             </a>
+            <a className="menu-item" href="/user-register">
+                👨‍💻 Registro Usuario Autorizado
+            </a>
         </Menu>
     )
 }

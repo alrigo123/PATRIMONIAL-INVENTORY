@@ -1,11 +1,12 @@
 import { Router } from "express";
 import {
-  getAllItemsLimited,
+  // getAllItemsLimited,
   getItemByCodePat,
   getItemsQtyByDependece,
   getItemsQtyByWorker,
   getConservationStatus,
-  getItemByCodePatAndConservation
+  getItemByCodePatAndConservation,
+  getAllItemsAndConservationLimited
 } from "../controllers/getItems.controller.js";
 
 import {
@@ -29,7 +30,8 @@ const router = Router();
 /* ROUTES FOR SEARCH AND GET ITEMS */
 
 //GET REQUEST
-router.get("/", getAllItemsLimited); // GET ALL ITEMS
+// router.get("/", getAllItemsLimited); // GET ALL ITEMS
+router.get("/", getAllItemsAndConservationLimited); // GET ALL ITEMS AND THEI CONSERVATION STATE
 router.get("/search", searchGeneral); // Endpoint para la búsqueda en tiempo real
 router.get("/worker", searchItemsByWorker); //GET ITEMS BY WORKER
 router.get("/dependency", searchItemsByDependece); //GET ITEMS BY DEPENDENCY

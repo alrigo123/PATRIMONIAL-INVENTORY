@@ -276,6 +276,136 @@ export const insertExcelData = async (req, res) => {
     }
 };
 
+// export const addItem = async (req, res) => {
+//     const {
+//         codigoPatrimonial,
+//         descripcion,
+//         trabajador,
+//         dependencia,
+//         ubicacion,
+//         FECHA_COMPRA,
+//         FECHA_ALTA,
+//         disposicion,
+//         situacion
+//     } = req.body;
+
+//     try {
+//         // Verificar si el código patrimonial ya existe
+//         const [existingRows] = await pool.query(
+//             'SELECT 1 FROM item WHERE CODIGO_PATRIMONIAL = ?',
+//             [codigoPatrimonial]
+//         );
+
+//         if (existingRows.length > 0) {
+//             return res.status(400).json({
+//                 message: `El código patrimonial ${codigoPatrimonial} ya existe en la base de datos.`,
+//             });
+//         }
+
+//         // Insertar nuevo bien patrimonial
+//         await pool.query(
+//             `INSERT INTO item (
+//                 CODIGO_PATRIMONIAL,
+//                 DESCRIPCION,
+//                 TRABAJADOR,
+//                 DEPENDENCIA,
+//                 UBICACION,
+//                 FECHA_COMPRA,
+//                 FECHA_ALTA,
+//                 DISPOSICION,
+//                 SITUACION
+//             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+//             [
+//                 codigoPatrimonial,
+//                 descripcion,
+//                 trabajador,
+//                 dependencia,
+//                 ubicacion,
+//                 FECHA_COMPRA || null,
+//                 FECHA_ALTA || null,
+//                 disposicion,
+//                 situacion
+//             ]
+//         );
+
+//         res.json({
+//             message: 'Bien patrimonial agregado correctamente.',
+//         });
+//     } catch (error) {
+//         res.status(500).json({
+//             message: 'Error al agregar el bien patrimonial.',
+//             error,
+//         });
+//     }
+// };
+
+// export const addItem = async (req, res) => {
+//     const {
+//         codigoPatrimonial,
+//         descripcion,
+//         trabajador,
+//         dependencia,
+//         ubicacion,
+//         FECHA_COMPRA,
+//         FECHA_ALTA,
+//         conservacion,
+//         disposicion,
+//         situacion
+//     } = req.body;
+
+//     try {
+//         // Verificar si el código patrimonial ya existe
+//         const [existingRows] = await pool.query(
+//             'SELECT 1 FROM item WHERE CODIGO_PATRIMONIAL = ?',
+//             [codigoPatrimonial]
+//         );
+
+//         if (existingRows.length > 0) {
+//             return res.status(400).json({
+//                 message: `El código patrimonial ${codigoPatrimonial} ya existe en la base de datos.`,
+//             });
+//         }
+
+//         // Insertar nuevo bien patrimonial
+//         await pool.query(
+//             `INSERT INTO item (
+//                 CODIGO_PATRIMONIAL,
+//                 DESCRIPCION,
+//                 TRABAJADOR,
+//                 DEPENDENCIA,
+//                 UBICACION,
+//                 FECHA_COMPRA,
+//                 FECHA_ALTA,
+//                 CONSERV,
+//                 DISPOSICION,
+//                 SITUACION
+//             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+//             [
+//                 codigoPatrimonial,
+//                 descripcion,
+//                 trabajador,
+//                 dependencia,
+//                 ubicacion,
+//                 FECHA_COMPRA || null,
+//                 FECHA_ALTA || null,
+//                 conservacion,
+//                 disposicion,
+//                 situacion
+//             ]
+//         );
+
+//         res.json({
+//             message: 'Bien patrimonial agregado correctamente.',
+//         });
+//     } catch (error) {
+//         res.status(500).json({
+//             message: 'Error al agregar el bien patrimonial.',
+//             error,
+//         });
+//     }
+// };
+
+
 export const addItem = async (req, res) => {
     const {
         codigoPatrimonial,
@@ -285,6 +415,7 @@ export const addItem = async (req, res) => {
         ubicacion,
         FECHA_COMPRA,
         FECHA_ALTA,
+        conservacion,
         disposicion,
         situacion
     } = req.body;
@@ -302,9 +433,26 @@ export const addItem = async (req, res) => {
             });
         }
 
-        // Insertar nuevo bien patrimonial
+        // Generar un valor único y aleatorio para N
+        let randomN;
+        let isUnique = false;
+
+        while (!isUnique) {
+            randomN = Math.floor(10000 + Math.random() * 90000); // Generar número entre 10000 y 99999
+            const [rows] = await pool.query(
+                'SELECT 1 FROM item WHERE N = ?',
+                [randomN]
+            );
+
+            if (rows.length === 0) {
+                isUnique = true; // Asegurar que el valor no exista
+            }
+        }
+
+        // Insertar nuevo bien patrimonial con el valor único para N
         await pool.query(
             `INSERT INTO item (
+                N,
                 CODIGO_PATRIMONIAL,
                 DESCRIPCION,
                 TRABAJADOR,
@@ -312,10 +460,12 @@ export const addItem = async (req, res) => {
                 UBICACION,
                 FECHA_COMPRA,
                 FECHA_ALTA,
+                CONSERV,
                 DISPOSICION,
                 SITUACION
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
+                randomN,
                 codigoPatrimonial,
                 descripcion,
                 trabajador,
@@ -323,6 +473,7 @@ export const addItem = async (req, res) => {
                 ubicacion,
                 FECHA_COMPRA || null,
                 FECHA_ALTA || null,
+                conservacion,
                 disposicion,
                 situacion
             ]
@@ -330,6 +481,7 @@ export const addItem = async (req, res) => {
 
         res.json({
             message: 'Bien patrimonial agregado correctamente.',
+            N: randomN, // Retornar el valor de N generado
         });
     } catch (error) {
         res.status(500).json({

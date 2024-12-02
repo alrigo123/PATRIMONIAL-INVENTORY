@@ -159,7 +159,7 @@ const EditItemComp = () => {
                     <form method="post" onSubmit={handleSubmit}>
                         <div className="row">
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Código Patrimonial</label>
+                                <label className="form-label fw-bold">Código Patrimonial</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -169,7 +169,7 @@ const EditItemComp = () => {
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Descripción</label>
+                                <label className="form-label fw-bold">Descripción</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -183,7 +183,7 @@ const EditItemComp = () => {
 
                         <div className="row">
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Trabajador</label>
+                                <label className="form-label fw-bold">Trabajador</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -194,7 +194,7 @@ const EditItemComp = () => {
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Dependencia</label>
+                                <label className="form-label fw-bold">Dependencia</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -208,7 +208,7 @@ const EditItemComp = () => {
 
                         <div className="row">
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Ubicación</label>
+                                <label className="form-label fw-bold">Ubicación</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -219,7 +219,7 @@ const EditItemComp = () => {
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Fecha de Registro (Escaneo código de barras)</label>
+                                <label className="form-label fw-bold">Fecha de Registro (Escaneo código de barras)</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -233,7 +233,7 @@ const EditItemComp = () => {
 
                         <div className="row">
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Fecha Alta</label>
+                                <label className="form-label fw-bold">Fecha Alta</label>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -243,7 +243,7 @@ const EditItemComp = () => {
                                 />
                             </div>
                             <div className="col-md-6 mb-3">
-                                <label className="form-label">Fecha Compra</label>
+                                <label className="form-label fw-bold">Fecha Compra</label>
                                 <input
                                     type="date"
                                     className="form-control"
@@ -254,101 +254,106 @@ const EditItemComp = () => {
                             </div>
                         </div>
 
-                        <div className="col-md-6 mb-3">
-                            <label className="form-label">Estado de Conservación</label>
-                            <select
-                                className="form-control"
-                                name="CONSERV"
-                                value={formData.CONSERV || ''} // Asume que CALIFICACION puede ser null, por eso asignamos una cadena vacía si es null
-                                onChange={handleInputChange}
-                                required
-                            >
-                                <option value="">Seleccionar</option>
-                                {loadingConservacion ? (
-                                    <option value="">Cargando...</option>
-                                ) : (
-                                    conservacion.map(cal => (
-                                        <option key={cal.id} value={cal.id}>
-                                            {cal.CONSERV} {/* Suponiendo que cada objeto tiene `id` y `nombre` */}
-                                        </option>
-                                    ))
-                                )}
-                            </select>
+                        <div className="row">
+                            <div className="col-md-6 mb-3">
+                                <label className="form-label fw-bold">Estado de Conservación</label>
+                                <select
+                                    className="form-select"
+                                    name="CONSERV"
+                                    value={formData.CONSERV || ''} // Asume que CALIFICACION puede ser null, por eso asignamos una cadena vacía si es null
+                                    onChange={handleInputChange}
+                                    required
+                                >
+                                    <option value="">Seleccionar</option>
+                                    {loadingConservacion ? (
+                                        <option value="">Cargando...</option>
+                                    ) : (
+                                        conservacion.map(cal => (
+                                            <option key={cal.id} value={cal.id}>
+                                                {cal.CONSERV} {/* Suponiendo que cada objeto tiene `id` y `nombre` */}
+                                            </option>
+                                        ))
+                                    )}
+                                </select>
+                            </div>
+
+                            <div className="col-md-6 mt-3 text-center">
+                                <div className="mb-3 text-center">
+                                    <label htmlFor="estadoSwitch" className="form-label me-2 fw-bold">Estado:</label>
+                                    <div className="form-check form-switch d-inline-flex align-items-center">
+                                        <input
+                                            className={`form-check-input ${formData.ESTADO === 1 ? 'bg-success' : 'bg-light'}`}
+                                            type="checkbox"
+                                            id="estadoSwitch"
+                                            name="ESTADO"
+                                            checked={formData.ESTADO === 1}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    ESTADO: e.target.checked ? 1 : 0,
+                                                })
+                                            }
+                                            disabled
+                                        />
+                                        <label className="form-check-label fw-bolder ms-2" htmlFor="estadoSwitch">
+                                            {formData.ESTADO === 1 ? 'Patrimonizado' : 'No Patrimonizado'}
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="mb-3 text-center">
+                                    <label htmlFor="disposicionSwitch" className="form-label me-2 fw-bold">Disposición:</label>
+                                    <div className="form-check form-switch d-inline-flex align-items-center">
+                                        <input
+                                            className={`form-check-input ${formData.DISPOSICION === 1 ? 'bg-success' : 'bg-light'}`}
+                                            type="checkbox"
+                                            id="disposicionSwitch"
+                                            name="DISPOSICION"
+                                            checked={formData.DISPOSICION === 1}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    DISPOSICION: e.target.checked ? 1 : 0,
+                                                })
+                                            }
+                                        />
+                                        <label className="form-check-label fw-bolder ms-2" htmlFor="disposicionSwitch">
+                                            {formData.DISPOSICION === 1 ? 'Funcional' : 'No Funcional'}
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="text-center">
+                                    <label htmlFor="situacionSwitch" className="form-label me-2 fw-bold">Situación:</label>
+                                    <div className="form-check form-switch d-inline-flex align-items-center">
+                                        <input
+                                            className={`form-check-input ${formData.SITUACION === 1 ? 'bg-success' : 'bg-light'}`}
+                                            type="checkbox"
+                                            id="situacionSwitch"
+                                            name="SITUACION"
+                                            checked={formData.SITUACION === 1}
+                                            onChange={(e) =>
+                                                setFormData({
+                                                    ...formData,
+                                                    SITUACION: e.target.checked ? 1 : 0,
+                                                })
+                                            }
+                                        />
+                                        <label className="form-check-label fw-bolder ms-2" htmlFor="situacionSwitch">
+                                            {formData.SITUACION === 1 ? 'Verificado' : 'Faltante'}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                         <div className="row mt-3">
-                            <div className="mb-3 text-center">
-                                <label htmlFor="estadoSwitch" className="form-label me-2 fw-bold">Estado:</label>
-                                <div className="form-check form-switch d-inline-flex align-items-center">
-                                    <input
-                                        className={`form-check-input ${formData.ESTADO === 1 ? 'bg-success' : 'bg-light'}`}
-                                        type="checkbox"
-                                        id="estadoSwitch"
-                                        name="ESTADO"
-                                        checked={formData.ESTADO === 1}
-                                        onChange={(e) =>
-                                            setFormData({
-                                                ...formData,
-                                                ESTADO: e.target.checked ? 1 : 0,
-                                            })
-                                        }
-                                        disabled
-                                    />
-                                    <label className="form-check-label fw-bolder ms-2" htmlFor="estadoSwitch">
-                                        {formData.ESTADO === 1 ? 'Patrimonizado' : 'No Patrimonizado'}
-                                    </label>
-                                </div>
-                            </div>
 
-                            <div className="mb-3 text-center">
-                                <label htmlFor="disposicionSwitch" className="form-label me-2 fw-bold">Disposición:</label>
-                                <div className="form-check form-switch d-inline-flex align-items-center">
-                                    <input
-                                        className={`form-check-input ${formData.DISPOSICION === 1 ? 'bg-success' : 'bg-light'}`}
-                                        type="checkbox"
-                                        id="disposicionSwitch"
-                                        name="DISPOSICION"
-                                        checked={formData.DISPOSICION === 1}
-                                        onChange={(e) =>
-                                            setFormData({
-                                                ...formData,
-                                                DISPOSICION: e.target.checked ? 1 : 0,
-                                            })
-                                        }
-                                    />
-                                    <label className="form-check-label fw-bolder ms-2" htmlFor="disposicionSwitch">
-                                        {formData.DISPOSICION === 1 ? 'Funcional' : 'No Funcional'}
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div className="mb-3 text-center">
-                                <label htmlFor="situacionSwitch" className="form-label me-2 fw-bold">Situación:</label>
-                                <div className="form-check form-switch d-inline-flex align-items-center">
-                                    <input
-                                        className={`form-check-input ${formData.SITUACION === 1 ? 'bg-success' : 'bg-light'}`}
-                                        type="checkbox"
-                                        id="situacionSwitch"
-                                        name="SITUACION"
-                                        checked={formData.SITUACION === 1}
-                                        onChange={(e) =>
-                                            setFormData({
-                                                ...formData,
-                                                SITUACION: e.target.checked ? 1 : 0,
-                                            })
-                                        }
-                                    />
-                                    <label className="form-check-label fw-bolder ms-2" htmlFor="situacionSwitch">
-                                        {formData.SITUACION === 1 ? 'Verificado' : 'Faltante'}
-                                    </label>
-                                </div>
-                            </div>
                         </div>
                         <div className="text-center mt-4">
-                            <button type="submit" className="btn btn-success me-3">
+                            <button type="submit" className="btn btn-success me-3 fw-bold p-2">
                                 Guardar Cambios
                             </button>
-                            <Link to="/codigo-patrimonial" className="btn btn-secondary">
+                            <Link to="/codigo-patrimonial" className="btn btn-secondary fw-bold p-2">
                                 Regresar
                             </Link>
                         </div>

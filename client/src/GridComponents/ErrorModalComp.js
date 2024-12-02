@@ -4,7 +4,6 @@ import Modal from 'react-modal'; // Librería para modales
 
 // Configuración inicial para React Modal
 Modal.setAppElement('#root');
-
 const ErrorModalComp = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false); // Estado para el modal

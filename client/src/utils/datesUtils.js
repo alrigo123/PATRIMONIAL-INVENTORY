@@ -14,8 +14,6 @@ export const formatToDateInput = (dateString) => {
     return `${year}-${month}-${day}`;
 };
 
-
-
 // Función para transformar "YYYY-MM-DD" a "DD/MM/YYYY HH:mm:ss"
 export const formatToDatabase = (dateString) => {
     if (!dateString || dateString.trim() === '') return ''; // Validar vacío

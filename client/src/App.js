@@ -28,6 +28,9 @@ import AddItemComp from './HandlerComponets/AddItemComp.js';
 //CHAT BOT
 import ChatBotComp from './ChatBotComp.js';
 
+//USER
+import RegisterWithPin from './UserComponents/RegisterWithPin.js';
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
@@ -51,12 +54,14 @@ function App() {
             {/* Handler Components */}
             <Route path="/edit/:id" element={<EditItemComp />} />
             <Route path="/add" element={<AddItemComp />} />
+            {/* USER ACTIONS */}
+            <Route path="/user-register" element={<RegisterWithPin />} />
             {/* AI INTEGRATION */}
             <Route path="/chat" element={<ChatBotComp />} />
           </Routes>
         </main>
       </BrowserRouter>
-      <FooterComp />  
+      <FooterComp />
     </div>
   );
 }
