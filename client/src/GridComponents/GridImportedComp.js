@@ -11,7 +11,8 @@ import TemplateExcelComp from './TemplateExcelComp';
 
 import {
   validateDateColumns, validateEmptyCells,
-  validateHeaderColumns, validatePatrimonialCodes
+  validateHeaderColumns, validatePatrimonialCodes, validateFile,
+  readWorkbook
 } from '../utils/excelFileValidations.js'
 
 const URI_ITEMS = process.env.REACT_APP_API_URL_ITEMS
@@ -27,72 +28,88 @@ const GridImportedComp = () => {
 
   const expectedColumns = ['CODIGO_PATRIMONIAL', 'DESCRIPCION', 'TRABAJADOR', 'DEPENDENCIA', 'UBICACION', 'FECHA_COMPRA', 'FECHA_ALTA'];
 
+  // Procesar y validar las hojas del archivo
+  const processSheets = (
+    workbook,
+    validateHeaderColumns,
+    validatePatrimonialCodes,
+    validateDateColumns,
+    setErrorMessage,
+    setShowModalButton
+  ) => {
+    const sheets = {};
+    let isValid = true;
+
+    workbook.SheetNames.forEach((sheetName) => {
+      const sheet = workbook.Sheets[sheetName];
+      const sheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      if (
+        !validateHeaderColumns(sheetData, expectedColumns, setErrorMessage, setShowModalButton) ||
+        !validatePatrimonialCodes(sheetData, setErrorMessage, setShowModalButton) ||
+        !validateDateColumns(sheetData, setErrorMessage, setShowModalButton)
+      ) {
+        isValid = false;
+        return;
+      }
+
+      sheets[sheetName] = sheetData;
+    });
+
+    return { sheets, isValid };
+  };
+
+  // Actualizar el estado y manejar la barra de progreso
+  const updateStateAndProgress = (sheets, workbook, setSheetsData, setCurrentSheet, setProgress, setFileLoaded, setLoading) => {
+    setSheetsData(sheets);
+    setCurrentSheet(workbook.SheetNames[0]); // Por defecto, seleccionar la primera hoja
+    setProgress(100);
+
+    setFileLoaded(true);
+    setTimeout(() => {
+      setFileLoaded(false);
+      setLoading(false);
+    }, 2000); // Ocultar mensaje después de 2 segundos
+  };
+
+  // Función principal que maneja la carga del archivo
   const handleFileUpload = (e) => {
     setProgress(10); // Progreso inicial
-    setLoading(true); // Inicia la carga (barra y mensaje visibles)
+    setLoading(true); // Inicia la carga
     const file = e.target.files[0];
 
-    if (!file) {
-      alert('Por favor seleccionar un archivo.');
-      document.querySelector('input[type="file"]').value = '';
-      setProgress(0); // Restablecer progreso si hay error
+    // Validar el archivo seleccionado
+    if (!validateFile(file, setProgress)) {
+      setLoading(false);
       return;
     }
 
-    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-      alert('Por favor, carga un archivo de formato Excel.');
-      document.querySelector('input[type="file"]').value = '';
-      setProgress(0); // Restablecer progreso si hay error
-      return;
-    }
+    setProgress(30); // Avanzar el progreso tras la validación
 
-    setProgress(30); // Progreso después de validar el archivo
+    // Leer el contenido del archivo
+    readWorkbook(file, XLSX, (workbook) => {
+      setProgress(50); // Actualización del progreso
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setProgress(50); // Progreso mientras se procesa el archivo
-      const workbook = XLSX.read(event.target.result, { type: 'binary' });
-      const sheets = {};
-
-      let isValid = true; // Flag para validar todas las hojas
-
-      workbook.SheetNames.forEach((sheetName) => {
-        const sheet = workbook.Sheets[sheetName];
-        const sheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-        // Validar columnas y códigos patrimoniales
-        if (
-          !validateHeaderColumns(sheetData, expectedColumns, setErrorMessage, setShowModalButton) ||
-          !validatePatrimonialCodes(sheetData, setErrorMessage, setShowModalButton) ||
-          !validateDateColumns(sheetData, setErrorMessage, setShowModalButton)
-
-        ) {
-          isValid = false;
-          return;
-        }
-
-        sheets[sheetName] = sheetData;
-      });
+      // Procesar las hojas del archivo
+      const { sheets, isValid } = processSheets(
+        workbook,
+        validateHeaderColumns,
+        validatePatrimonialCodes,
+        validateDateColumns,
+        setErrorMessage,
+        setShowModalButton
+      );
 
       if (!isValid) {
         document.querySelector('input[type="file"]').value = ''; // Limpiar archivo cargado
-        setProgress(0); // Restablecer progreso si la validación falla
-        setLoading(false); // Detener la carga si hay error
-        return; // No actualizar estado si hay errores
+        setProgress(0);
+        setLoading(false);
+        return;
       }
-      setSheetsData(sheets);
-      setCurrentSheet(workbook.SheetNames[0]); // Default to the first sheet
-      setProgress(100); // Completar progreso
 
-      // Mostrar mensaje de archivo cargado y luego ocultarlo
-      setFileLoaded(true);
-      setTimeout(() => {
-        setFileLoaded(false);
-        setLoading(false); // Ocultar la barra y el mensaje después de 3 segundos
-      }, 2000); // El mensaje desaparece después de 3 segundos
-    };
-
-    reader.readAsArrayBuffer(file);
+      // Actualizar estado y progreso final
+      updateStateAndProgress(sheets, workbook, setSheetsData, setCurrentSheet, setProgress, setFileLoaded, setLoading);
+    });
   };
 
   // Validar durante edición directa en la grilla
@@ -160,16 +177,20 @@ const GridImportedComp = () => {
     }
 
     try {
-      // console.log("DATA RESPONSE:", allData)
       // throw Error
-      
+      console.log("DATA RESPONSE:", allData)
+
       // Enviando los datos al backend via Axios
       const response = await axios.post(`${URI_ITEMS}/imported`, { data: allData });
 
-
       // Handling response from the backend
       if (response.status === 200) {
-        alert('Datos enviados correctamente');
+        Swal.fire({
+          title: '¡Datos Enviados!',
+          text: 'Los datos se enviaron correctamente a la base de datos.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        })
       } else {
         alert('Error: ' + response.data.message);
       }
@@ -232,7 +253,6 @@ const GridImportedComp = () => {
           <strong>Archivo cargado con éxito!</strong>
         </div>
       )}
-
 
       {errorMessage && (
         <div

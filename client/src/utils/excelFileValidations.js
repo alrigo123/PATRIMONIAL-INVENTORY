@@ -119,3 +119,31 @@ export const validateEmptyCells = (data, expectedColumns, setErrorMessage, setSh
     setShowModalButton(false);
     return true;
 }
+
+/// HANDLER FILE VALIDATIONS
+
+export const validateFile = (file, setProgress) => {
+    if (!file) {
+        alert('Por favor seleccionar un archivo.');
+        document.querySelector('input[type="file"]').value = '';
+        setProgress(0);
+        return false;
+    }
+
+    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+        alert('Por favor, carga un archivo de formato Excel.');
+        document.querySelector('input[type="file"]').value = '';
+        setProgress(0);
+        return false;
+    }
+    return true;
+};
+
+export const readWorkbook = (file, XLSX, onLoadCallback) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const workbook = XLSX.read(event.target.result, { type: 'binary' });
+      onLoadCallback(workbook);
+    };
+    reader.readAsArrayBuffer(file);
+  };
