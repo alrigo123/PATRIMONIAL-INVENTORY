@@ -1,11 +1,11 @@
 import { Router } from "express";
 
-import {} from "../controllers/exportReports.controller.js";
+import {registerUser} from "../controllers/userManagement.controller.js";
 
 
 const router = Router();
 
 //EXPORT DATA TO EXCEL
-// router.get("/state", getItemsGeneralState);
+router.post("/register", registerUser);
 
 export default router;

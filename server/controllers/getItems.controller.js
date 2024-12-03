@@ -1,26 +1,6 @@
 import pool from '../db.js';
 
 //FUNCTIONS TO GET DATA
-// export const getAllItemsLimited = async (req, res, next) => {
-//     try {
-//         const page = parseInt(req.query.page) || 1; // Página actual, por defecto 1
-//         const limit = parseInt(req.query.limit) || 50; // Límite de registros por página, por defecto 50
-//         const offset = (page - 1) * limit; // Cálculo del offset
-
-//         const [rows] = await pool.query(
-//             'SELECT * FROM item ORDER BY N ASC LIMIT ? OFFSET ?',
-//             [limit, offset]
-//         );
-
-//         const [totalRows] = await pool.query('SELECT COUNT(*) as total FROM item');
-//         const total = totalRows[0].total;
-
-//         res.json({ total, page, limit, items: rows });
-//     } catch (error) {
-//         return res.status(500).json(error);
-//     }
-// }
-
 export const getItemByCodePat = async (req, res, next) => {
     try {
         const id = req.params.id
