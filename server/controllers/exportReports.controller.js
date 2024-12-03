@@ -1,11 +1,37 @@
 import pool from '../db.js';
 
+// export const getItemsGeneralState = async (req, res) => {
+//     try {
+//         const [rows] = await pool.query(
+//             `SELECT N, CODIGO_PATRIMONIAL, DESCRIPCION, DEPENDENCIA, UBICACION, 
+//             TRABAJADOR, FECHA_COMPRA, FECHA_ALTA, FECHA_REGISTRO, ESTADO 
+//             FROM item`
+//         );
+
+//         // Validar si hay resultados
+//         if (rows.length === 0) {
+//             return res.status(404).json({ message: "No se encontraron elementos" });
+//         }
+//         res.json(rows);
+//         // console.log(rows)
+
+//     } catch (error) {
+//         console.error("Error en la consulta a la base de datos:", error.message);
+//         return res.status(500).json({ error: "Error al obtener los datos de la base de datos" });
+//     }
+// };
+
 export const getItemsGeneralState = async (req, res) => {
     try {
         const [rows] = await pool.query(
-            `SELECT N, CODIGO_PATRIMONIAL, DESCRIPCION, DEPENDENCIA, UBICACION, 
-            TRABAJADOR, FECHA_COMPRA, FECHA_ALTA, FECHA_REGISTRO, ESTADO 
-            FROM item`
+            `SELECT 
+            I.N, I.CODIGO_PATRIMONIAL, I.DESCRIPCION, I.TRABAJADOR, 
+            I.DEPENDENCIA, I.UBICACION, I.FECHA_REGISTRO, 
+            I.FECHA_ALTA, I.FECHA_COMPRA, I.ESTADO, I.DISPOSICION,
+            I.SITUACION, I.CONSERV, C.CONSERV AS EST_CONSERVACION
+        FROM item AS I
+        INNER JOIN conservacion AS C
+        ON I.CONSERV = C.id`
         );
 
         // Validar si hay resultados

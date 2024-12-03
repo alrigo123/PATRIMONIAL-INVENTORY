@@ -9,6 +9,12 @@ import ModalComp from './ModalComp';
 import ErrorModalComp from './ErrorModalComp';
 import TemplateExcelComp from './TemplateExcelComp';
 
+import {
+  validateDateColumns, validateEmptyCells,
+  validateHeaderColumns, validatePatrimonialCodes, validateFile,
+  readWorkbook
+} from '../utils/excelFileValidations.js'
+
 const URI_ITEMS = process.env.REACT_APP_API_URL_ITEMS
 
 const GridImportedComp = () => {
@@ -22,171 +28,89 @@ const GridImportedComp = () => {
 
   const expectedColumns = ['CODIGO_PATRIMONIAL', 'DESCRIPCION', 'TRABAJADOR', 'DEPENDENCIA', 'UBICACION', 'FECHA_COMPRA', 'FECHA_ALTA'];
 
-  const validatePatrimonialCodes = (sheetData) => {
-    const headers = sheetData[0]; // Primera fila como encabezados
-    const patrimonialIndex = headers.indexOf('CODIGO_PATRIMONIAL');
+  // Procesar y validar las hojas del archivo
+  const processSheets = (
+    workbook,
+    validateHeaderColumns,
+    validatePatrimonialCodes,
+    validateDateColumns,
+    setErrorMessage,
+    setShowModalButton
+  ) => {
+    const sheets = {};
+    let isValid = true;
 
-    if (patrimonialIndex === -1) return true; // No hay columna, pasa la validación.
+    workbook.SheetNames.forEach((sheetName) => {
+      const sheet = workbook.Sheets[sheetName];
+      const sheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-    const invalidRows = sheetData.slice(1).filter((row) => {
-      const value = row[patrimonialIndex];
-      return (
-        !/^\d{1,12}$/.test(value) // Solo números y máximo 12 dígitos
-      );
+      if (
+        !validateHeaderColumns(sheetData, expectedColumns, setErrorMessage, setShowModalButton) ||
+        !validatePatrimonialCodes(sheetData, setErrorMessage, setShowModalButton) ||
+        !validateDateColumns(sheetData, setErrorMessage, setShowModalButton)
+      ) {
+        isValid = false;
+        return;
+      }
+
+      sheets[sheetName] = sheetData;
     });
 
-    if (invalidRows.length > 0) {
-      setErrorMessage(`
-        La columna <strong>CODIGO_PATRIMONIAL</strong> contiene errores:
-        <ul>
-          ${invalidRows
-          .map(
-            (row, idx) =>
-              `<li>Fila ${idx + 2}: Código inválido (<strong>${row[patrimonialIndex] || 'vacío'
-              }</strong>)</li>`
-          )
-          .join('')}
-        </ul>
-        Asegúrate de que los códigos sean numéricos y tengan máximo 12 dígitos.
-      `);
-      setShowModalButton(true);
-      return false;
-    }
-
-    return true;
+    return { sheets, isValid };
   };
 
+  // Actualizar el estado y manejar la barra de progreso
+  const updateStateAndProgress = (sheets, workbook, setSheetsData, setCurrentSheet, setProgress, setFileLoaded, setLoading) => {
+    setSheetsData(sheets);
+    setCurrentSheet(workbook.SheetNames[0]); // Por defecto, seleccionar la primera hoja
+    setProgress(100);
+
+    setFileLoaded(true);
+    setTimeout(() => {
+      setFileLoaded(false);
+      setLoading(false);
+    }, 2000); // Ocultar mensaje después de 2 segundos
+  };
+
+  // Función principal que maneja la carga del archivo
   const handleFileUpload = (e) => {
     setProgress(10); // Progreso inicial
-    setLoading(true); // Inicia la carga (barra y mensaje visibles)
+    setLoading(true); // Inicia la carga
     const file = e.target.files[0];
 
-    if (!file) {
-      alert('Por favor seleccionar un archivo.');
-      document.querySelector('input[type="file"]').value = '';
-      setProgress(0); // Restablecer progreso si hay error
+    // Validar el archivo seleccionado
+    if (!validateFile(file, setProgress)) {
+      setLoading(false);
       return;
     }
 
-    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
-      alert('Por favor, carga un archivo de formato Excel.');
-      document.querySelector('input[type="file"]').value = '';
-      setProgress(0); // Restablecer progreso si hay error
-      return;
-    }
+    setProgress(30); // Avanzar el progreso tras la validación
 
-    setProgress(30); // Progreso después de validar el archivo
+    // Leer el contenido del archivo
+    readWorkbook(file, XLSX, (workbook) => {
+      setProgress(50); // Actualización del progreso
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setProgress(50); // Progreso mientras se procesa el archivo
-      const workbook = XLSX.read(event.target.result, { type: 'binary' });
-      const sheets = {};
-
-      let isValid = true; // Flag para validar todas las hojas
-
-      workbook.SheetNames.forEach((sheetName) => {
-        const sheet = workbook.Sheets[sheetName];
-        const sheetData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-        // Validar columnas y códigos patrimoniales
-        if (!validateColumns(sheetData) || !validatePatrimonialCodes(sheetData)) {
-          isValid = false;
-          return;
-        }
-
-        sheets[sheetName] = sheetData;
-      });
+      // Procesar las hojas del archivo
+      const { sheets, isValid } = processSheets(
+        workbook,
+        validateHeaderColumns,
+        validatePatrimonialCodes,
+        validateDateColumns,
+        setErrorMessage,
+        setShowModalButton
+      );
 
       if (!isValid) {
         document.querySelector('input[type="file"]').value = ''; // Limpiar archivo cargado
-        setProgress(0); // Restablecer progreso si la validación falla
-        setLoading(false); // Detener la carga si hay error
-        return; // No actualizar estado si hay errores
+        setProgress(0);
+        setLoading(false);
+        return;
       }
-      setSheetsData(sheets);
-      setCurrentSheet(workbook.SheetNames[0]); // Default to the first sheet
-      setProgress(100); // Completar progreso
 
-      // Mostrar mensaje de archivo cargado y luego ocultarlo
-      setFileLoaded(true);
-      setTimeout(() => {
-        setFileLoaded(false);
-        setLoading(false); // Ocultar la barra y el mensaje después de 3 segundos
-      }, 2000); // El mensaje desaparece después de 3 segundos
-    };
-
-    reader.readAsArrayBuffer(file);
+      // Actualizar estado y progreso final
+      updateStateAndProgress(sheets, workbook, setSheetsData, setCurrentSheet, setProgress, setFileLoaded, setLoading);
+    });
   };
-
-  const validateColumns = (sheetData) => {
-    const uploadedColumns = sheetData[0]; // Headers
-    const missingColumns = expectedColumns.filter((col) => !uploadedColumns.includes(col));
-    const extraColumns = uploadedColumns.filter((col) => !expectedColumns.includes(col));
-
-    if (missingColumns.length > 0 || extraColumns.length > 0) {
-      let error = 'El archivo no sigue el formato de campos requerido.<br>';
-      if (missingColumns.length > 0) {
-        error += `En su archivo faltan las columnas: <b>${missingColumns.join(', ')}</b>.<br>`;
-      }
-      if (extraColumns.length > 0) {
-        error += `Su archivo contiene las columnas: <b>${extraColumns.join(', ')}</b>.`;
-      }
-      setErrorMessage(error);
-      setShowModalButton(true);
-      return false;
-    }
-
-    setErrorMessage('');
-    setShowModalButton(false);
-    return true;
-  };
-
-  // Validar durante edición directa en la grilla
-  // const updateCellValue = (sheetName, rowIndex, colIndex, newValue) => {
-  //   setSheetsData((prevData) => {
-  //     const updatedData = { ...prevData }; // Crear una copia del estado actual
-  //     const sheet = updatedData[sheetName].map((row, rIndex) => {
-  //       if (rIndex === rowIndex) {
-  //         // Si estamos en la fila objetivo
-  //         return row.map((cell, cIndex) => {
-  //           const columnName = updatedData[sheetName][0][cIndex]; // Nombre de la columna
-
-  //           if (
-  //             columnName === 'CODIGO_PATRIMONIAL' && // Validar si es la columna correcta
-  //             !/^\d{1,12}$/.test(newValue) // Validar que cumpla con los requisitos
-  //           ) {
-  //             Swal.fire({
-  //               title: 'Código inválido',
-  //               text: 'El código debe contener solo números y tener máximo 12 dígitos.',
-  //               icon: 'warning',
-  //               confirmButtonText: 'Aceptar',
-  //             });
-  //             return cell; // Devolver el valor actual si no es válido
-  //           }
-
-  //           // Validar FECHA_COMPRA y FECHA_ALTA
-  //          if (
-  //             (columnName === 'FECHA_COMPRA' || columnName === 'FECHA_ALTA') &&
-  //             !/^\d{4}[-/]\d{2}[-/]\d{2}$/.test(newValue) // Validar formato similar a fecha
-  //           ) {
-  //             Swal.fire({
-  //               title: 'Fecha inválida',
-  //               text: 'La fecha debe tener un formato similar a YYYY-MM-DD o DD/MM/YYYY.',
-  //               icon: 'warning',
-  //               confirmButtonText: 'Aceptar',
-  //             });
-  //             return cell; // No actualizar si es inválido
-  //           }
-  //           return cIndex === colIndex ? newValue : cell; // Actualizar solo la celda específica
-  //         });
-  //       }
-  //       return row; // Devolver la fila intacta si no coincide
-  //     });
-  //     updatedData[sheetName] = sheet; // Actualizar la hoja específica
-  //     return updatedData; // Devolver los datos actualizados
-  //   });
-  // };
 
   // Validar durante edición directa en la grilla
   const updateCellValue = (sheetName, rowIndex, colIndex, newValue) => {
@@ -231,24 +155,6 @@ const GridImportedComp = () => {
       return updatedData; // Devolver los datos actualizados
     });
   };
-  
-  // Valida si hay celdas vacías en los datos
-  const validateEmptyCells = (data) => {
-    const invalidRows = data.filter((row) =>
-      expectedColumns.some((header) => !row[header] || row[header].toString().trim() === '')
-    );
-
-    if (invalidRows.length > 0) {
-      setErrorMessage(`<strong>Existen celdas vacías en el archivo.</strong> <br>
-        Por favor, completa todos los campos antes de enviarlo.`);
-      setShowModalButton(true);
-      return false;
-    }
-
-    setErrorMessage('');
-    setShowModalButton(false);
-    return true;
-  };
 
   const sendDataToDatabase = async () => {
     const allData = Object.values(sheetsData).flatMap((sheetData) => {
@@ -266,20 +172,25 @@ const GridImportedComp = () => {
     });
 
     // Validar celdas vacías
-    if (!validateEmptyCells(allData)) {
+    if (!validateEmptyCells(allData, expectedColumns, setErrorMessage, setShowModalButton)) {
       return; // No proceder si hay celdas vacías
     }
 
     try {
-      // console.log("DATA RESPONSE:", allData)
       // throw Error
+      console.log("DATA RESPONSE:", allData)
+
       // Enviando los datos al backend via Axios
       const response = await axios.post(`${URI_ITEMS}/imported`, { data: allData });
 
-
       // Handling response from the backend
       if (response.status === 200) {
-        alert('Datos enviados correctamente');
+        Swal.fire({
+          title: '¡Datos Enviados!',
+          text: 'Los datos se enviaron correctamente a la base de datos.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar'
+        })
       } else {
         alert('Error: ' + response.data.message);
       }
@@ -342,7 +253,6 @@ const GridImportedComp = () => {
           <strong>Archivo cargado con éxito!</strong>
         </div>
       )}
-
 
       {errorMessage && (
         <div

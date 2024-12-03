@@ -122,11 +122,11 @@ const CodeSearchMod2 = () => {
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Descripción</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Trabajador</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Dependencia</th>
-                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Conservacion</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Ultima Fecha de Registro</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Fecha de Alta</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Estado</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Disposición</th>
+                <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Conservación</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>Situación</th>
                 <th style={{ textAlign: 'center', verticalAlign: 'middle' }}>ACCION</th>
               </tr>
@@ -138,7 +138,6 @@ const CodeSearchMod2 = () => {
                   <td>{item.DESCRIPCION}</td>
                   <td>{item.TRABAJADOR}</td>
                   <td>{item.DEPENDENCIA}</td>
-                  <td>{item.EST_CONSERVACION}</td>
                   <td>{item.FECHA_REGISTRO ? new Date(item.FECHA_REGISTRO).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''}</td>
                   <td>{item.FECHA_ALTA ? item.FECHA_ALTA : 'No Registra'}</td>
                   <td>
@@ -154,6 +153,22 @@ const CodeSearchMod2 = () => {
                     ) : (
                       <span style={{ color: 'green', fontWeight: 'bold' }}>Funcional</span>
                     )}
+                  </td>
+                  {/* <td>{item.EST_CONSERVACION}</td> */}
+                  <td
+                    style={{
+                      fontWeight: 'bold',
+                      color:
+                        item.EST_CONSERVACION === "Bueno"
+                          ? "blue"
+                          : item.EST_CONSERVACION === "Malo"
+                            ? "#790303"
+                            : item.EST_CONSERVACION === "Regular"
+                              ? "purple"
+                              : "black", // Color por defecto
+                    }}
+                  >
+                    {item.EST_CONSERVACION}
                   </td>
                   <td>
                     {item.SITUACION === 0 ? (

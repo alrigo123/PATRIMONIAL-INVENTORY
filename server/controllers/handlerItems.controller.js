@@ -83,49 +83,6 @@ export const getItemByCodePatAndUpdate = async (req, res, next) => {
     }
 };
 
-// export const updateItem = async (req, res) => {
-//     const { id } = req.params;
-//     const { DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION,
-//         SITUACION } = req.body;
-//     try {
-//         // Consulta SQL para actualizar el item
-//         const [result] = await pool.query(
-//             `
-//             UPDATE item 
-//             SET 
-//                 DESCRIPCION = ?,
-//                 TRABAJADOR = ?, 
-//                 DEPENDENCIA = ?, 
-//                 UBICACION = ?, 
-//                 FECHA_ALTA = ?, 
-//                 FECHA_COMPRA = ?, 
-//                 DISPOSICION = ?, 
-//                 SITUACION = ?
-//             WHERE 
-//                 CODIGO_PATRIMONIAL = ?
-//             `,
-//             [
-//                 DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION,
-//                 FECHA_ALTA || null, FECHA_COMPRA || null,
-//                 DISPOSICION, SITUACION,
-//                 id
-//             ]
-//         );
-
-//         // Verificar si el ítem fue encontrado
-//         if (result.affectedRows === 0) {
-//             console.log("NO SE ENCONTRO EL ITEM")
-//             return res.status(404).json({ message: 'Item not found' });
-//         }
-
-//         res.json({ message: 'Item updated successfully' });
-//     } catch (error) {
-//         console.log("ERROR EN HANDLER: ", error)
-//         res.status(500).json({ message: 'Error updating item', error });
-//     }
-// };
-
-
 export const updateItem = async (req, res) => {
     const { id } = req.params;
     const { DESCRIPCION, TRABAJADOR, DEPENDENCIA, UBICACION, FECHA_ALTA, FECHA_COMPRA, DISPOSICION, SITUACION, CONSERV } = req.body;
@@ -188,46 +145,6 @@ export const updateItem = async (req, res) => {
     }
 };
 
-
-// export const insertExcelData = async (req, res) => {
-//     const { data } = req.body; // The data array from the React frontend
-//     try {
-//         // Start a transaction to ensure atomicity
-//         await pool.query('START TRANSACTION');
-
-//         // Iterate over each row of data and insert into the database
-//         for (let row of data) {
-//             const { CODIGO_PATRIMONIAL, DESCRIPCION,
-//                 TRABAJADOR, DEPENDENCIA, UBICACION,
-//                 FECHA_COMPRA, FECHA_ALTA } = row;
-
-//             // SQL query to insert the data into your 'item' table
-//             const [result] = await pool.query(
-//                 `INSERT INTO item (CODIGO_PATRIMONIAL, DESCRIPCION,
-//                 TRABAJADOR, DEPENDENCIA, UBICACION,
-//                 FECHA_COMPRA, FECHA_ALTA) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-//                 [CODIGO_PATRIMONIAL, DESCRIPCION,
-//                     TRABAJADOR, DEPENDENCIA, UBICACION,
-//                     FECHA_COMPRA, FECHA_ALTA]
-//             );
-
-//             // If the insert fails (affectedRows === 0), you can handle it as needed
-//             if (result.affectedRows === 0) {
-//                 return res.status(400).json({ message: 'Failed to insert row' });
-//             }
-//         }
-
-//         // Commit the transaction
-//         await pool.query('COMMIT');
-
-//         res.json({ message: 'Excel data inserted successfully' });
-//     } catch (error) {
-//         // If an error occurs, rollback the transaction to avoid partial inserts
-//         await pool.query('ROLLBACK');
-//         res.status(500).json({ message: 'Error inserting Excel data', error });
-//     }
-// };
-
 // SELECT * FROM item WHERE TRABAJADOR LIKE '%ESTRADA CHILE%' AND ESTADO = 0;
 
 export const insertExcelData = async (req, res) => {
@@ -285,6 +202,7 @@ export const addItem = async (req, res) => {
         ubicacion,
         FECHA_COMPRA,
         FECHA_ALTA,
+        conservacion,
         disposicion,
         situacion
     } = req.body;
@@ -302,9 +220,26 @@ export const addItem = async (req, res) => {
             });
         }
 
-        // Insertar nuevo bien patrimonial
+        // Generar un valor único y aleatorio para N
+        let randomN;
+        let isUnique = false;
+
+        while (!isUnique) {
+            randomN = Math.floor(10000 + Math.random() * 90000); // Generar número entre 10000 y 99999
+            const [rows] = await pool.query(
+                'SELECT 1 FROM item WHERE N = ?',
+                [randomN]
+            );
+
+            if (rows.length === 0) {
+                isUnique = true; // Asegurar que el valor no exista
+            }
+        }
+
+        // Insertar nuevo bien patrimonial con el valor único para N
         await pool.query(
             `INSERT INTO item (
+                N,
                 CODIGO_PATRIMONIAL,
                 DESCRIPCION,
                 TRABAJADOR,
@@ -312,10 +247,12 @@ export const addItem = async (req, res) => {
                 UBICACION,
                 FECHA_COMPRA,
                 FECHA_ALTA,
+                CONSERV,
                 DISPOSICION,
                 SITUACION
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
+                randomN,
                 codigoPatrimonial,
                 descripcion,
                 trabajador,
@@ -323,6 +260,7 @@ export const addItem = async (req, res) => {
                 ubicacion,
                 FECHA_COMPRA || null,
                 FECHA_ALTA || null,
+                conservacion,
                 disposicion,
                 situacion
             ]
@@ -330,6 +268,7 @@ export const addItem = async (req, res) => {
 
         res.json({
             message: 'Bien patrimonial agregado correctamente.',
+            N: randomN, // Retornar el valor de N generado
         });
     } catch (error) {
         res.status(500).json({
